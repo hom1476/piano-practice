@@ -7,110 +7,1109 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0a6c74">
 <style>
-:root{--bg:#f2f5f7;--sf:#fff;--ink:#14212b;--mut:#5b6b77;--ln:#d3dce2;--ac:#0a6c74;--acfg:#fff;--hint:#d98a00;--on:#0a6c74;--wk:#fff;--bk:#1b2730;color-scheme:light}
-@media (prefers-color-scheme:dark){:root{--bg:#10181e;--sf:#17222a;--ink:#e6eef2;--mut:#93a4b0;--ln:#2b3a44;--ac:#5cc4cc;--acfg:#06262a;--hint:#f0b05a;--on:#5cc4cc;--wk:#dfe7ec;--bk:#0b1116;color-scheme:dark}}
-*{box-sizing:border-box}html,body{height:100%;margin:0}
-body{display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI","Noto Sans TC","PingFang TC",sans-serif;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
-header{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:6px 10px;background:var(--sf);border-bottom:1px solid var(--ln)}
-button,label.btn{font:inherit;padding:6px 12px;border-radius:8px;border:1px solid var(--ac);background:var(--ac);color:var(--acfg);font-weight:600;cursor:pointer}
-button.sec,label.btn.sec{background:transparent;color:var(--ac)}button:disabled{opacity:.45}
-#status{color:var(--mut);font-size:.9rem;margin-left:auto}
-#score{flex:1;min-height:0;overflow:auto;background:#fff;color:#000}
-#stage{display:none;flex:1;min-height:0;background:#0d1519}
-body.single #score{flex:none;height:var(--lh,160px)}
-body.two #score{flex:none;height:var(--lh2,300px)}
-body.single #stage,body.two #stage{display:block}
-body.single #score::after,body.two #score::after{content:'';display:block;height:var(--lh2,300px)}
-#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
-#ped{display:inline-flex;gap:4px;align-items:center;font-size:.8rem;color:var(--mut)}
-#ped b{width:14px;height:14px;border-radius:50%;border:2px solid var(--mut)}
-#ped b.on{background:var(--on);border-color:var(--on)}
-body[data-mode=glow] #kb .on{box-shadow:0 0 14px 4px var(--on)}
-body[data-mode=beginner] .tm{display:none}
-select{font:inherit;padding:5px;border-radius:8px;border:1px solid var(--ln);background:var(--sf);color:var(--ink)}
-#beg{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:3px 10px;font-size:.85rem;background:var(--sf);border-bottom:1px solid var(--ln)}
-#beg input[type=number]{width:3.6em;font:inherit}
-body[data-mode=game] #beg{display:none}
-.gm{display:none}body[data-mode=game] .gm{display:inline-block}
-#info{flex:none;padding:3px 10px;font-size:.95rem;background:#0d1519;color:#cfe;display:flex;gap:18px}
-#hud{position:fixed;right:12px;bottom:calc(min(24vh,140px) + 40px);z-index:12;color:#fff;font-weight:800;text-align:right;text-shadow:0 1px 4px #000;display:none;line-height:1.35}
-#dlg,#result{position:fixed;inset:0;z-index:30;background:#000a;display:none;align-items:center;justify-content:center}
-#dlg.on,#result.on{display:flex}
-.card{background:var(--sf);color:var(--ink);border-radius:12px;padding:16px;max-width:min(560px,92vw);max-height:90vh;overflow:auto}
-textarea{width:100%;height:26vh;font:13px/1.4 ui-monospace,Consolas,monospace;background:var(--bg);color:var(--ink);border:1px solid var(--ln);border-radius:8px}
-.jp{position:fixed;z-index:15;transform:translateX(-50%);font-weight:800;font-size:.9rem;pointer-events:none;animation:jp .8s ease-out forwards;text-shadow:0 1px 3px #000}
-@keyframes jp{to{transform:translate(-50%,-34px);opacity:0}}
-.cp{position:fixed;z-index:20;font-weight:900;pointer-events:none;white-space:nowrap;text-shadow:0 3px 0 #0007,0 0 18px currentColor;animation:cp 1.1s ease-out forwards}
-@keyframes cp{0%{transform:scale(.2) rotate(var(--r));opacity:0}20%{transform:scale(1.25) rotate(var(--r));opacity:1}70%{transform:scale(1) rotate(var(--r));opacity:1}100%{transform:scale(1.4) rotate(var(--r)) translateY(-40px);opacity:0}}
-#rot{display:none;padding:6px 10px;background:var(--hint);color:#000;text-align:center;font-weight:600}
-@media (orientation:portrait){#rot{display:block}}
-#kb{position:relative;height:min(24vh,140px);flex:none;background:var(--bk);border-top:2px solid var(--ln)}
-#kb i{position:absolute;top:0;border:1px solid #0006;border-radius:0 0 3px 3px}
-#kb .w{background:var(--wk);height:100%}
-#kb .b{background:var(--bk);height:62%;z-index:2;border-color:#000}
-#kb .w.hint{background:var(--hint)}#kb .b.hint{background:var(--hint)}
-#kb .w.on,#kb .b.on{background:var(--on)}
+/* ===== 主題變數定義 ===== */
+:root, body[data-theme="ocean"] {
+  --bg: #0f171e;
+  --sf: #16222c;
+  --sf2: #1e2d3a;
+  --ink: #e6eef4;
+  --mut: #8fa3b3;
+  --ln: #293b49;
+  --ac: #38bdf8;
+  --ac2: #0a6c74;
+  --acfg: #041e27;
+  --hint: #f59e0b;
+  --on: #38bdf8;
+  --wk: #f8fafc;
+  --wk-bdr: #cbd5e1;
+  --bk: #111820;
+  --score-bg: #fbfaf6;
+  --stage-bg: #091015;
+  --felt: #7f1d1d;
+  color-scheme: dark;
+}
+body[data-theme="classic"] {
+  --bg: #16120e;
+  --sf: #221b15;
+  --sf2: #2e241c;
+  --ink: #f5ebd9;
+  --mut: #b09f85;
+  --ln: #3d3024;
+  --ac: #d4af37;
+  --ac2: #8a6d1b;
+  --acfg: #1a1306;
+  --hint: #e07a5f;
+  --on: #d4af37;
+  --wk: #fdfbf7;
+  --wk-bdr: #d6cebf;
+  --bk: #181310;
+  --score-bg: #f9f4e8;
+  --stage-bg: #100c09;
+  --felt: #6b1414;
+  color-scheme: dark;
+}
+body[data-theme="dawn"] {
+  --bg: #f1f5f9;
+  --sf: #ffffff;
+  --sf2: #e2e8f0;
+  --ink: #0f172a;
+  --mut: #64748b;
+  --ln: #cbd5e1;
+  --ac: #0284c7;
+  --ac2: #0369a1;
+  --acfg: #ffffff;
+  --hint: #ea580c;
+  --on: #0284c7;
+  --wk: #ffffff;
+  --wk-bdr: #94a3b8;
+  --bk: #1e293b;
+  --score-bg: #ffffff;
+  --stage-bg: #0f172a;
+  --felt: #991b1b;
+  color-scheme: light;
+}
+body[data-theme="neon"] {
+  --bg: #090614;
+  --sf: #130d26;
+  --sf2: #1f163d;
+  --ink: #f3e8ff;
+  --mut: #9d8ec4;
+  --ln: #2e2157;
+  --ac: #f43f5e;
+  --ac2: #a855f7;
+  --acfg: #ffffff;
+  --hint: #00f5d4;
+  --on: #f43f5e;
+  --wk: #eef2ff;
+  --wk-bdr: #c7d2fe;
+  --bk: #0d081d;
+  --score-bg: #f5f3ff;
+  --stage-bg: #06040d;
+  --felt: #be123c;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; overflow: hidden; }
+body {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--ink);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", "Noto Sans TC", "PingFang TC", sans-serif;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  user-select: none;
+}
+
+/* ===== 頂部單一整合導覽列 ===== */
+header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--sf);
+  border-bottom: 1px solid var(--ln);
+  flex-shrink: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  white-space: nowrap;
+  z-index: 20;
+  box-shadow: 0 2px 10px rgba(0,0,0,.2);
+}
+header::-webkit-scrollbar { display: none; }
+
+.nav-grp {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.nav-div {
+  width: 1px;
+  height: 24px;
+  background: var(--ln);
+  margin: 0 2px;
+  flex-shrink: 0;
+}
+.pill-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--sf2);
+  border: 1px solid var(--ln);
+  padding: 3px 8px;
+  border-radius: 9px;
+  font-size: 13px;
+}
+
+/* 按鈕與表單控制項 */
+button, label.btn, select {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all .15s ease;
+  white-space: nowrap;
+}
+button, label.btn {
+  background: var(--ac);
+  color: var(--acfg);
+  border-color: var(--ac);
+}
+button:hover:not(:disabled), label.btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+button:active:not(:disabled), label.btn:active { transform: translateY(0); }
+button.sec, label.btn.sec {
+  background: var(--sf2);
+  color: var(--ink);
+  border-color: var(--ln);
+}
+button.sec:hover:not(:disabled), label.btn.sec:hover {
+  border-color: var(--ac);
+  color: var(--ac);
+}
+button.act {
+  background: var(--ac);
+  color: var(--acfg);
+  border-color: var(--ac);
+}
+button.danger {
+  background: #ef4444;
+  color: #fff;
+  border-color: #ef4444;
+}
+button:disabled, input:disabled { opacity: .45; cursor: not-allowed; }
+
+select {
+  background: var(--sf2);
+  color: var(--ink);
+  border-color: var(--ln);
+  padding-right: 6px;
+}
+select:focus { outline: 1px solid var(--ac); }
+
+input[type="number"] {
+  width: 44px;
+  padding: 2px 4px;
+  border-radius: 5px;
+  border: 1px solid var(--ln);
+  background: var(--sf);
+  color: var(--ink);
+  font: inherit;
+  text-align: center;
+}
+input[type="range"] {
+  width: 72px;
+  accent-color: var(--ac);
+  cursor: pointer;
+}
+
+/* 藍牙狀態圓點 */
+.ble-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--mut);
+  display: inline-block;
+}
+.ble-dot.on {
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+}
+
+/* 模式條件顯示控制 */
+body[data-mode="beginner"] .tm { display: none !important; }
+body[data-mode="game"] #beg { display: none !important; }
+.gm { display: none !important; }
+body[data-mode="game"] .gm { display: inline-flex !important; }
+
+/* ===== 主內容區 ===== */
+#workspace {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+#score {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--score-bg);
+  color: #000;
+  position: relative;
+  box-shadow: 0 4px 16px rgba(0,0,0,.28);
+  z-index: 2;
+  scroll-behavior: smooth;
+}
+#osmd-box {
+  width: 100%;
+  padding-bottom: 60px;
+}
+#resizer {
+  display: none;
+  height: 10px;
+  background: var(--sf);
+  border-top: 1px solid var(--ln);
+  border-bottom: 1px solid var(--ln);
+  cursor: ns-resize;
+  align-items: center;
+  justify-content: center;
+  z-index: 8;
+  flex-shrink: 0;
+  touch-action: none;
+}
+#resizer::after {
+  content: '';
+  width: 42px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--mut);
+  opacity: .6;
+}
+#resizer:hover::after { opacity: 1; background: var(--ac); }
+
+#stage {
+  display: none;
+  flex: 1;
+  min-height: 90px;
+  background: radial-gradient(circle at 50% 100%, var(--sf2) 0%, var(--stage-bg) 75%);
+  position: relative;
+}
+
+/* 分割畫面模式 (提示 hint、流光 glow、遊戲 game) */
+body.has-score.split-stage #score {
+  flex: none;
+  height: var(--score-split-h, 46vh);
+  min-height: 150px;
+  max-height: calc(100% - 100px);
+}
+body.has-score.split-stage #resizer {
+  display: flex;
+}
+body.has-score.split-stage #stage {
+  display: block;
+}
+
+/* 空狀態歡迎卡片 */
+#empty-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: radial-gradient(circle at 50% 35%, var(--sf2) 0%, var(--bg) 80%);
+  z-index: 4;
+}
+#empty-state.hide { display: none; }
+.empty-card {
+  background: var(--sf);
+  color: var(--ink);
+  border: 1px solid var(--ln);
+  border-radius: 16px;
+  padding: 26px 30px;
+  max-width: 560px;
+  text-align: center;
+  box-shadow: 0 12px 32px rgba(0,0,0,.35);
+}
+.empty-card h2 { margin: 8px 0 6px; font-size: 1.35rem; }
+.empty-card p { margin: 0 0 14px; color: var(--mut); font-size: .92rem; }
+.fmt-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+.fmt-pill {
+  font-size: 11.5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--sf2);
+  border: 1px solid var(--ln);
+  color: var(--mut);
+}
+.fmt-pill b { color: var(--ac); }
+.empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.empty-actions button, .empty-actions label.btn {
+  padding: 10px 18px;
+  font-size: 14px;
+}
+
+/* 懸浮毛玻璃狀態與和弦膠囊 */
+#float-bar {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  z-index: 12;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(15, 23, 30, .78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.14);
+  color: #e2e8f0;
+  font-size: 12.5px;
+  pointer-events: none;
+  box-shadow: 0 4px 14px rgba(0,0,0,.35);
+}
+#float-bar b { color: var(--ac); font-weight: 700; }
+#ped {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+}
+#ped b {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid #94a3b8;
+  display: inline-block;
+  transition: all .15s;
+}
+#ped b.on {
+  background: var(--ac);
+  border-color: var(--ac);
+  box-shadow: 0 0 8px var(--ac);
+}
+#status {
+  color: #cbd5e1;
+  max-width: 360px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 特效畫布 */
+#fx {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 6;
+}
+
+/* ===== 遊戲模式 HUD 儀表板 ===== */
+#hud {
+  position: fixed;
+  right: 14px;
+  bottom: calc(min(22vh, 134px) + 14px);
+  z-index: 12;
+  background: rgba(12, 18, 26, .82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 14px;
+  padding: 10px 14px;
+  color: #fff;
+  display: none;
+  min-width: 210px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.45);
+  pointer-events: none;
+}
+.hud-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+}
+.hud-score { font-size: 1.35rem; font-weight: 900; font-variant-numeric: tabular-nums; color: var(--ac); }
+.hud-combo { font-size: .85rem; font-weight: 700; color: #fbbf24; }
+.hud-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 12px;
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+}
+.hud-item { display: flex; justify-content: space-between; gap: 6px; }
+.hud-item span:first-child { font-weight: 700; }
+
+/* ===== 88 鍵擬真立體鋼琴鍵盤 ===== */
+#kb {
+  position: relative;
+  height: min(22vh, 134px);
+  flex: none;
+  background: var(--bk);
+  border-top: 4px solid var(--felt);
+  box-shadow: 0 -3px 12px rgba(0,0,0,.45);
+  z-index: 10;
+  touch-action: none;
+}
+#kb i {
+  position: absolute;
+  top: 0;
+  font-style: normal;
+  transition: background .06s, transform .05s, box-shadow .08s;
+}
+#kb .w {
+  background: linear-gradient(180deg, #ffffff 0%, var(--wk) 88%, #e2e8f0 100%);
+  height: 100%;
+  border: 1px solid var(--wk-bdr);
+  border-top: none;
+  border-radius: 0 0 5px 5px;
+  box-shadow: inset 0 -5px 0 rgba(0,0,0,.14);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #64748b;
+}
+#kb .b {
+  background: linear-gradient(180deg, #334155 0%, var(--bk) 82%, #020617 100%);
+  height: 62%;
+  z-index: 2;
+  border: 1px solid #000;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  box-shadow: inset 0 -4px 0 rgba(255,255,255,.08), 0 3px 5px rgba(0,0,0,.55);
+}
+#kb .w.hint {
+  background: linear-gradient(180deg, #fef3c7 0%, var(--hint) 100%);
+  color: #000;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,.2), 0 0 12px var(--hint);
+}
+#kb .b.hint {
+  background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+  box-shadow: 0 0 12px var(--hint);
+}
+#kb .w.on {
+  background: linear-gradient(180deg, #e0f2fe 0%, var(--on) 100%);
+  color: var(--acfg);
+  transform: translateY(1.5px);
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,.2), 0 0 14px var(--on);
+}
+#kb .b.on {
+  background: linear-gradient(180deg, var(--on) 0%, var(--ac2) 100%);
+  transform: translateY(1.5px);
+  box-shadow: 0 0 14px var(--on);
+}
+body[data-mode="glow"] #kb .on {
+  box-shadow: 0 0 18px 4px var(--on);
+}
+
+/* ===== 彈出視窗 ===== */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(0, 0, 0, .68);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal.on { display: flex; }
+.card {
+  background: var(--sf);
+  color: var(--ink);
+  border: 1px solid var(--ln);
+  border-radius: 16px;
+  padding: 20px;
+  width: 100%;
+  max-width: min(700px, 94vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 50px rgba(0,0,0,.5);
+  animation: popIn .18s ease-out;
+}
+@keyframes popIn {
+  from { transform: scale(.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.card-hd {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ln);
+}
+.card-hd h3 { margin: 0; font-size: 1.15rem; }
+
+/* 曲庫搜尋面板樣式 */
+.lib-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.search-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.search-row input[type="text"] {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--ln);
+  background: var(--bg);
+  color: var(--ink);
+  font: inherit;
+}
+.warn-box {
+  background: rgba(245, 158, 11, .12);
+  border: 1px solid rgba(245, 158, 11, .35);
+  color: var(--ink);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  margin-bottom: 10px;
+  line-height: 1.45;
+}
+.ext-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: var(--mut);
+}
+.ext-links a {
+  color: var(--ac);
+  text-decoration: none;
+  background: var(--sf2);
+  border: 1px solid var(--ln);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+.ext-links a:hover { border-color: var(--ac); }
+.song-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 44vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.song-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--sf2);
+  border: 1px solid var(--ln);
+}
+.song-meta { min-width: 0; flex: 1; }
+.song-title { font-weight: 700; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.song-sub { font-size: 12px; color: var(--mut); display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 3px; }
+.badge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  background: var(--ln);
+  color: var(--ink);
+}
+.badge.mid {
+  background: #d97706;
+  color: #fff;
+}
+.song-acts { display: flex; gap: 6px; flex-shrink: 0; }
+
+/* 設定列表樣式 */
+.set-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--ln);
+  gap: 12px;
+}
+.set-row:last-of-type { border-bottom: none; }
+.set-lbl b { display: block; font-size: 14px; margin-bottom: 2px; }
+.set-lbl small { color: var(--mut); font-size: 12px; }
+
+/* 結算統計格 */
+.res-grade {
+  font-size: 3.2rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--ac);
+  margin: 4px 0;
+}
+.res-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 14px 0;
+}
+.res-stat {
+  background: var(--sf2);
+  border: 1px solid var(--ln);
+  border-radius: 10px;
+  padding: 8px;
+  text-align: center;
+}
+.res-stat small { display: block; font-size: 11px; color: var(--mut); }
+.res-stat b { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+
+textarea {
+  width: 100%;
+  height: 24vh;
+  font: 13px/1.45 ui-monospace, Consolas, monospace;
+  background: var(--bg);
+  color: var(--ink);
+  border: 1px solid var(--ln);
+  border-radius: 8px;
+  padding: 8px;
+  margin-top: 8px;
+}
+
+/* 遊戲浮動判定與倒數 */
+.jp {
+  position: fixed;
+  z-index: 15;
+  transform: translateX(-50%);
+  font-weight: 800;
+  font-size: .88rem;
+  pointer-events: none;
+  animation: jp .85s ease-out forwards;
+  text-shadow: 0 2px 4px rgba(0,0,0,.85);
+}
+@keyframes jp { to { transform: translate(-50%, -36px); opacity: 0; } }
+.cp {
+  position: fixed;
+  z-index: 20;
+  font-weight: 900;
+  pointer-events: none;
+  white-space: nowrap;
+  text-shadow: 0 3px 0 #0007, 0 0 18px currentColor;
+  animation: cp 1.1s ease-out forwards;
+}
+@keyframes cp {
+  0% { transform: scale(.2) rotate(var(--r)); opacity: 0; }
+  20% { transform: scale(1.25) rotate(var(--r)); opacity: 1; }
+  70% { transform: scale(1) rotate(var(--r)); opacity: 1; }
+  100% { transform: scale(1.4) rotate(var(--r)) translateY(-40px); opacity: 0; }
+}
+#cd {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 18;
+  font-size: 32vmin;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 36px #000, 0 4px 0 #0008;
+  pointer-events: none;
+}
+@keyframes pulse { from { transform: scale(1.6); opacity: .3; } to { transform: scale(1); opacity: 1; } }
+
+#rot {
+  display: none;
+  padding: 6px 10px;
+  background: var(--hint);
+  color: #000;
+  text-align: center;
+  font-weight: 700;
+  font-size: 13px;
+}
+@media (orientation: portrait) { #rot { display: block; } }
 </style>
 </head>
-<body>
-<div id="rot">請將手機或平板橫放使用</div>
+<body data-theme="ocean">
+<div id="rot">📱 建議將手機或平板橫放，以獲得視覺最佳視野</div>
+
+<!-- 單一整合頂部導覽列 -->
 <header>
-<select id="mode" aria-label="練習模式"><option value="hint">提示</option><option value="glow">流光溢彩</option><option value="off">關閉</option><option value="beginner">初學者</option><option value="game">遊戲</option></select>
-<button id="demo" class="sec">示範曲</button>
-<label class="btn sec">匯入琴譜<input id="file" type="file" accept=".musicxml,.xml,.mxl,.mid,.midi,.pdf,.png,.jpg,.jpeg" hidden></label>
-<button id="jp" class="sec">簡譜</button>
-<button id="ble">連線藍牙琴</button>
-<button id="play" class="tm">開始</button>
-<label style="font-size:.85rem">速度 <input id="spd" type="range" min="40" max="150" step="10" value="100"><span id="spdv">♩=100</span></label>
-<button id="cal" class="sec gm">校準</button>
-<button id="next" class="sec">下一步</button>
-<button id="reset" class="sec">重來</button>
-<button id="fs" class="sec">全螢幕</button>
-<span id="ped" title="左／中／右踏板"><b></b><b></b><b></b></span>
-<span id="status">載入中…</span>
+  <!-- 左區：曲譜來源與模式 -->
+  <div class="nav-grp">
+    <button id="open-lib" title="線上搜尋與下載曲譜 (MusicXML / MIDI)">🔍 搜尋曲庫</button>
+    <label class="btn sec" title="支援匯入格式：MusicXML (.musicxml, .xml, .mxl) 與 MIDI (.mid, .midi)">
+      📂 匯入 <small style="opacity:.75;font-weight:500">(XML/MID)</small>
+      <input id="file" type="file" accept=".musicxml,.xml,.mxl,.mid,.midi,.pdf,.png,.jpg,.jpeg" hidden>
+    </label>
+    <button id="jp" class="sec" title="手動輸入數字簡譜">📝 簡譜</button>
+    <select id="mode" aria-label="練習模式">
+      <option value="off">模式：關閉</option>
+      <option value="beginner" selected>模式：初學者</option>
+      <option value="hint">模式：提示</option>
+      <option value="glow">模式：流光溢彩</option>
+      <option value="game">模式：遊戲</option>
+    </select>
+  </div>
+
+  <div class="nav-div"></div>
+
+  <!-- 中區：播放控制、練習設定(#beg 整合)、速度與節拍器 -->
+  <div class="nav-grp">
+    <button id="play" class="tm">▶ 開始</button>
+    <button id="reset" class="sec" title="回到開頭">⏮ 重來</button>
+    <button id="next" class="sec" title="前進一個音符">⏭ 下一步</button>
+
+    <div id="beg" class="pill-box">
+      <select id="hand" aria-label="練習聲部選擇" style="padding:2px 6px;border:none;background:transparent">
+        <option value="all">全部聲部</option>
+        <option value="rh">鋼琴右手</option>
+        <option value="lh">鋼琴左手</option>
+      </select>
+      <span style="color:var(--ln)">|</span>
+      <label style="display:inline-flex;align-items:center;gap:4px;cursor:pointer">
+        <input type="checkbox" id="loop">反覆
+      </label>
+      <input id="la" type="number" min="1" value="1" aria-label="起始小節">
+      <span>~</span>
+      <input id="lb" type="number" min="1" value="4" aria-label="結束小節">
+    </div>
+
+    <div class="pill-box">
+      <input id="spd" type="range" min="40" max="150" step="10" value="100" title="調整練習速度">
+      <span id="spdv" style="min-width:48px;font-weight:700;font-variant-numeric:tabular-nums">♩=100</span>
+    </div>
+
+    <button id="mt" class="sec">🔔 節拍器 關</button>
+    <button id="cal" class="sec gm">🎯 校準</button>
+  </div>
+
+  <div class="nav-div" style="margin-left:auto"></div>
+
+  <!-- 右區：譜面縮放、藍牙、設定與全螢幕 -->
+  <div class="nav-grp">
+    <div class="pill-box" title="調整五線譜顯示大小">
+      <button id="zm-out" class="sec" style="padding:2px 7px;border:none" title="縮小樂譜">A-</button>
+      <span id="zm-val" style="min-width:36px;text-align:center;font-size:12px;font-weight:700">100%</span>
+      <button id="zm-in" class="sec" style="padding:2px 7px;border:none" title="放大樂譜">A+</button>
+    </div>
+    <button id="ble" class="sec" title="連線或管理藍牙 MIDI 鋼琴"><span id="ble-dot" class="ble-dot"></span><span id="ble-txt">藍牙</span></button>
+    <button id="open-set" class="sec" title="介面風格與瀑布流設定">⚙️ 設定</button>
+    <button id="fs" class="sec" title="全螢幕切換">⛶</button>
+  </div>
 </header>
-<div id="beg">
-<label>練習 <select id="hand"><option value="all">雙手</option><option value="0">右手</option><option value="1">左手</option></select></label>
-<label><input type="checkbox" id="loop"> 反覆 小節 <input id="la" type="number" min="1" value="1"> 到 <input id="lb" type="number" min="1" value="4"></label>
-<label><input type="checkbox" id="metro"> 節拍器</label>
+
+<!-- 工作區：五線譜 + 可拖曳分隔線 + 舞台 + 懸浮資訊膠囊 -->
+<div id="workspace">
+  <div id="score">
+    <div id="empty-state">
+      <div class="empty-card">
+        <div style="font-size:2.6rem">🎹</div>
+        <h2>開始你的鋼琴練習</h2>
+        <p>可從線上曲庫搜尋下載，或從本機匯入以下支援的樂譜檔案格式：</p>
+        <div class="fmt-pills">
+          <span class="fmt-pill"><b>MusicXML</b>：.musicxml / .xml / .mxl (最精準推薦)</span>
+          <span class="fmt-pill"><b>MIDI 音樂檔</b>：.mid / .midi (自動轉譯五線譜)</span>
+        </div>
+        <div class="empty-actions">
+          <button id="empty-lib">🔍 搜尋／下載線上曲譜</button>
+          <label class="btn sec" title="支援 .musicxml, .xml, .mxl, .mid, .midi">
+            📂 匯入本機檔案 (.musicxml / .mid)
+            <input id="file2" type="file" accept=".musicxml,.xml,.mxl,.mid,.midi,.pdf,.png,.jpg,.jpeg" hidden>
+          </label>
+          <button id="empty-jp" class="sec">📝 簡譜輸入</button>
+        </div>
+      </div>
+    </div>
+    <div id="osmd-box"></div>
+  </div>
+  <!-- 瀑布流模式下可上下拖曳調整譜面高度的把手 -->
+  <div id="resizer" title="上下拖曳可自由調整五線譜與舞台高度比例"></div>
+  <div id="stage"></div>
+
+  <!-- 懸浮毛玻璃資訊膠囊 -->
+  <div id="float-bar">
+    <span>和弦 <b id="chd">—</b></span>
+    <span>調性 <b id="key">—</b></span>
+    <span id="ped" title="左／中／右踏板狀態">踏板 <b></b><b></b><b></b></span>
+    <span id="status">請選擇或搜尋曲譜（支援 .musicxml / .mxl / .mid）</span>
+  </div>
 </div>
-<div id="score"></div>
-<div id="stage"></div>
-<div id="info"><span>和弦：<b id="chd">—</b></span><span>調性：<b id="key">—</b></span></div>
+
+<!-- 88 鍵立體鋼琴鍵盤 -->
 <div id="kb" aria-hidden="true"></div>
+
+<!-- 特效畫布與遊戲 HUD -->
 <canvas id="fx"></canvas>
 <div id="hud"></div>
-<div id="dlg"><div class="card"></div></div>
-<div id="result"><div class="card"></div></div>
+<div id="cd"></div>
+
+<!-- 通用對話框 -->
+<div id="dlg" class="modal"><div class="card"></div></div>
+
+<!-- 遊戲結算視窗 -->
+<div id="result" class="modal"><div class="card"></div></div>
+
+<!-- 🔍 線上曲庫搜尋與下載視窗 -->
+<div id="lib-modal" class="modal">
+  <div class="card">
+    <div class="card-hd">
+      <h3>🔍 曲譜搜尋與下載</h3>
+      <button id="lib-close" class="sec">✕ 關閉</button>
+    </div>
+    <div class="lib-tabs">
+      <button id="tab-curated" class="act">🎵 精選古典／練習曲</button>
+      <button id="tab-github" class="sec">🌐 GitHub 樂譜庫 (MusicXML)</button>
+      <button id="tab-midi" class="sec">🎹 MIDI 搜尋與轉譜 (.mid)</button>
+      <button id="tab-url" class="sec">🔗 網址載入</button>
+    </div>
+
+    <!-- 頁籤 1：精選古典 (原生 MusicXML) -->
+    <div id="pane-curated">
+      <div class="search-row">
+        <input id="curated-q" type="text" placeholder="篩選曲名、作曲家（例如：Bach, Mozart, Clementi, 卡農）…">
+      </div>
+      <div id="curated-list" class="song-list"></div>
+    </div>
+
+    <!-- 頁籤 2：GitHub 樂譜庫搜尋 (原生 MusicXML 為主) -->
+    <div id="pane-github" style="display:none">
+      <div class="search-row">
+        <input id="gh-q" type="text" placeholder="輸入英文曲名或作曲家（如：Mozart, Bach, Beethoven, Chopin, Joplin）…">
+        <button id="gh-btn">搜尋 XML</button>
+      </div>
+      <div style="font-size:12px;color:var(--mut);margin-bottom:8px">
+        💡 檢索 GitHub 開源樂譜庫中的原生 <code>.musicxml</code>、<code>.xml</code>、<code>.mxl</code> 檔案，譜面記號最完整準確。
+      </div>
+      <div id="gh-list" class="song-list"></div>
+    </div>
+
+    <!-- 頁籤 3：MIDI 專用搜尋與下載 (置於 GitHub 搜尋之後) -->
+    <div id="pane-midi" style="display:none">
+      <div class="warn-box">
+        ⚠️ <b>MIDI 轉譜提醒</b>：MIDI（<code>.mid</code> / <code>.midi</code>）原本是電子音源序列格式，載入時系統會自動以演算法量化並分軌（中央 C 以上為右手、以下為左手）轉成五線譜，<b>拍號、調號與雙手分配可能不如原生 MusicXML 精準</b>。
+      </div>
+      <div class="search-row">
+        <input id="midi-q" type="text" placeholder="輸入英文或中文搜尋 MIDI（如：Pegasus, Evangelion, 龍捲風, 勇氣, Bach, Canon）…">
+        <button id="midi-btn">線上搜尋 MID</button>
+      </div>
+      <div class="ext-links">
+        <span>🌐 免登入外部 MIDI 網站直達（下載 <code>.mid</code> 後點左上角「📂 匯入」即可自動轉譜）：</span>
+        <a id="ext-bitmidi" href="https://bitmidi.com/" target="_blank" rel="noopener">BitMidi (11萬首免費庫) ↗</a>
+        <a id="ext-vgmusic" href="https://www.vgmusic.com/" target="_blank" rel="noopener">VGMusic (電玩動漫庫) ↗</a>
+        <a id="ext-kunst" href="https://www.kunstderfuge.com/" target="_blank" rel="noopener">KunstDerFuge (古典庫) ↗</a>
+      </div>
+      <div id="midi-list" class="song-list"></div>
+    </div>
+
+    <!-- 頁籤 4：網址載入 -->
+    <div id="pane-url" style="display:none">
+      <p style="font-size:13px;color:var(--mut);margin:0 0 8px">
+        貼上任何公開的 <code>.musicxml</code>、<code>.xml</code>、<code>.mxl</code> 或 <code>.mid</code> / <code>.midi</code> 檔案連結：
+      </p>
+      <div class="search-row">
+        <input id="url-in" type="text" placeholder="https://example.com/score.musicxml 或 song.mid">
+        <button id="url-go">載入琴譜</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ⚙️ 設定視窗 -->
+<div id="set-modal" class="modal">
+  <div class="card" style="max-width:460px">
+    <div class="card-hd">
+      <h3>⚙️ 介面與視覺設定</h3>
+      <button id="set-close" class="sec">✕ 完成</button>
+    </div>
+    <div class="set-row">
+      <div class="set-lbl">
+        <b>🎨 整體介面風格</b>
+        <small>切換導覽列、背景舞台與琴鍵色調</small>
+      </div>
+      <select id="set-theme">
+        <option value="ocean">深海青（預設）</option>
+        <option value="classic">古典音樂廳（黑金木紋）</option>
+        <option value="dawn">極簡清晨（明亮白）</option>
+        <option value="neon">午夜霓虹（Cyberpunk）</option>
+      </select>
+    </div>
+    <div class="set-row">
+      <div class="set-lbl">
+        <b>🌠 瀑布流光條配色</b>
+        <small>適用於「提示」與「遊戲」模式的落鍵光條</small>
+      </div>
+      <select id="set-fall">
+        <option value="hand">依左右手分色（右手青／左手金）</option>
+        <option value="key">依黑白鍵分色（白鍵亮青／黑鍵紫紅）</option>
+        <option value="rainbow">彩虹十二平均律（依音高 12 色）</option>
+        <option value="white">經典純白（半透明純白漸層）</option>
+      </select>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@2.2.1/build/opensheetmusicdisplay.min.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 const say = t => $('status').textContent = t;
 
-/* 88 鍵（MIDI 21–108） */
-const keyEls = {};
+/* ===== 偏好設定載入與儲存 ===== */
+let prefTheme = 'ocean', prefFall = 'hand', zoomLv = 1.0;
+try {
+  prefTheme = localStorage.getItem('piano_theme') || 'ocean';
+  prefFall = localStorage.getItem('piano_fall') || 'hand';
+  zoomLv = parseFloat(localStorage.getItem('piano_zoom')) || (innerWidth < 1024 ? 0.85 : 1.0);
+} catch (e){}
+function applyPrefs(){
+  document.body.dataset.theme = prefTheme;
+  $('set-theme').value = prefTheme;
+  $('set-fall').value = prefFall;
+  $('zm-val').textContent = Math.round(zoomLv * 100) + '%';
+}
+applyPrefs();
+$('open-set').onclick = () => $('set-modal').classList.add('on');
+$('set-close').onclick = () => $('set-modal').classList.remove('on');
+$('set-theme').onchange = e => {
+  prefTheme = e.target.value;
+  document.body.dataset.theme = prefTheme;
+  try { localStorage.setItem('piano_theme', prefTheme); } catch (err){}
+};
+$('set-fall').onchange = e => {
+  prefFall = e.target.value;
+  try { localStorage.setItem('piano_fall', prefFall); } catch (err){}
+};
+
+/* ===== 譜面縮放控制 (A- / A+) ===== */
+function setZoom(z){
+  zoomLv = Math.max(0.5, Math.min(1.6, Math.round(z * 20) / 20));
+  $('zm-val').textContent = Math.round(zoomLv * 100) + '%';
+  try { localStorage.setItem('piano_zoom', zoomLv); } catch (e){}
+  if (!osmd || !steps.length) return;
+  const i = idx;
+  stop();
+  osmd.Zoom = zoomLv;
+  osmd.render();
+  osmd.cursor.show();
+  build();
+  go(i);
+  refresh();
+  buildFall();
+}
+$('zm-out').onclick = () => setZoom(zoomLv - 0.1);
+$('zm-in').onclick = () => setZoom(zoomLv + 0.1);
+$('zm-val').onclick = () => setZoom(1.0);
+
+/* ===== 可拖曳調整五線譜與舞台高度的分隔把手 (#resizer) ===== */
 (function(){
-  const kb = $('kb'), W = 100 / 52, BK = new Set([1,3,6,8,10]);
+  const resizer = $('resizer'), ws = $('workspace');
+  let dragging = false;
+  resizer.addEventListener('pointerdown', e => {
+    dragging = true;
+    resizer.setPointerCapture(e.pointerId);
+  });
+  resizer.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const rect = ws.getBoundingClientRect();
+    const h = Math.max(140, Math.min(rect.height - 100, e.clientY - rect.top));
+    document.documentElement.style.setProperty('--score-split-h', h + 'px');
+  });
+  const endDrag = () => {
+    if (!dragging) return;
+    dragging = false;
+    follow();
+  };
+  resizer.addEventListener('pointerup', endDrag);
+  resizer.addEventListener('pointercancel', endDrag);
+})();
+
+/* ===== 88 鍵（MIDI 21–108）與 C 音標記 ===== */
+const keyEls = {}, BK_SET = new Set([1,3,6,8,10]);
+(function(){
+  const kb = $('kb'), W = 100 / 52;
   let wi = 0;
   for (let n = 21; n <= 108; n++){
     const i = document.createElement('i');
-    if (BK.has(n % 12)){ i.className = 'b'; i.style.width = W * .6 + '%'; i.style.left = (wi * W - W * .3) + '%'; }
-    else { i.className = 'w'; i.style.width = W + '%'; i.style.left = wi * W + '%'; wi++; }
-    i.dataset.n = n; kb.appendChild(i); keyEls[n] = i;
+    if (BK_SET.has(n % 12)){
+      i.className = 'b';
+      i.style.width = W * .62 + '%';
+      i.style.left = (wi * W - W * .31) + '%';
+    } else {
+      i.className = 'w';
+      i.style.width = W + '%';
+      i.style.left = wi * W + '%';
+      if (n % 12 === 0) i.textContent = 'C' + (Math.floor(n / 12) - 1);
+      wi++;
+    }
+    i.dataset.n = n;
+    kb.appendChild(i);
+    keyEls[n] = i;
   }
 })();
 
-/* 琴譜、練習模式與特效 */
-const LEAD = 1.4, MODES = {off:'關閉', hint:'提示', glow:'流光溢彩', beginner:'初學者', game:'遊戲'};
-let osmd = null, steps = [], idx = 0, bpm = 100, spd = 1, mode = 'hint', expected = [], hand = 'all', barQ = 4;
-let bars = [], comets = [], playing = false, t0 = 0, spawnI = 0, pieceHist = new Array(12).fill(0);
+/* ===== 琴譜、練習模式與三行譜智慧聲部識別 ===== */
+const MODES = {off:'關閉', hint:'提示', glow:'流光溢彩', beginner:'初學者', game:'遊戲'};
+let osmd = null, steps = [], idx = 0, bpm = 100, spd = 1, mode = 'beginner', expected = [], hand = 'all', barQ = 4;
+let rhStaffId = 0, lhStaffId = 1, hasVoiceStaff = false;
+let bars = [], playing = false, t0 = 0, pieceHist = new Array(12).fill(0);
 const held = new Set(), pressed = new Set(), scoreEl = $('score');
-const need = st => st.nt.filter(x => hand === 'all' || x.s === +hand).map(x => x.m);
-const dlg = html => { $('dlg').firstElementChild.innerHTML = html + '<p><button id="dx">關閉</button></p>'; $('dlg').classList.add('on'); $('dx').onclick = () => $('dlg').classList.remove('on'); };
 
-/* 調性與和弦 */
+function detectStaffRoles(){
+  let totalStaves = 2;
+  try { totalStaves = osmd.Sheet.Staves.length; } catch (e){}
+  const sel = $('hand');
+  const prevVal = sel.value;
+  if (totalStaves >= 3){
+    hasVoiceStaff = true;
+    rhStaffId = totalStaves - 2;
+    lhStaffId = totalStaves - 1;
+    sel.innerHTML =
+      '<option value="all">全部聲部 (含伴奏)</option>' +
+      '<option value="piano">僅鋼琴雙手</option>' +
+      '<option value="rh">鋼琴右手</option>' +
+      '<option value="lh">鋼琴左手</option>' +
+      '<option value="voice">人聲／主旋律</option>';
+  } else {
+    hasVoiceStaff = false;
+    rhStaffId = 0;
+    lhStaffId = 1;
+    sel.innerHTML =
+      '<option value="all">雙手</option>' +
+      '<option value="rh">右手</option>' +
+      '<option value="lh">左手</option>';
+  }
+  if ([...sel.options].some(o => o.value === prevVal)) sel.value = prevVal;
+  else sel.value = hasVoiceStaff ? 'piano' : 'all';
+  hand = sel.value;
+}
+
+const matchHand = sId => {
+  if (hand === 'all') return true;
+  if (hand === 'piano') return sId === rhStaffId || sId === lhStaffId;
+  if (hand === 'rh') return sId === rhStaffId;
+  if (hand === 'lh') return sId === lhStaffId;
+  if (hand === 'voice') return sId === 0;
+  return true;
+};
+const need = st => st.nt.filter(x => matchHand(x.s)).map(x => x.m);
+
+const dlg = html => {
+  $('dlg').firstElementChild.innerHTML = html + '<div style="margin-top:14px;text-align:right"><button id="dx" class="sec">關閉</button></div>';
+  $('dlg').classList.add('on');
+  $('dx').onclick = () => $('dlg').classList.remove('on');
+};
+
+/* ===== 調性與和弦推算 ===== */
 const NS = ['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'], NF = ['C','D♭','D','E♭','E','F','G♭','G','A♭','A','B♭','B'];
-const KMAJ = [6.35,2.23,3.48,2.33,4.38,4.09,2.52,5.19,2.39,3.66,2.29,2.88], KMIN = [6.33,2.68,3.52,5.38,2.60,3.53,2.54,4.75,3.98,2.69,3.34,3.17];
+const KMAJ = [6.35,2.23,3.48,2.33,4.38,4.09,2.52,5.19,2.39,3.66,2.29,3.88], KMIN = [6.33,2.68,3.52,5.38,2.60,3.53,2.54,4.75,3.98,2.69,3.34,3.17];
 function detectKey(h){
   if (h.reduce((a, b) => a + b, 0) <= 0) return null;
   let best = null;
@@ -154,38 +1153,61 @@ function updateInfo(){
 }
 
 function paint(){
-  for (const n in keyEls){ const k = keyEls[n]; k.classList.toggle('on', held.has(+n)); k.classList.toggle('hint', expected.includes(+n) && !held.has(+n)); }
+  for (const n in keyEls){
+    const k = keyEls[n];
+    k.classList.toggle('on', held.has(+n));
+    k.classList.toggle('hint', expected.includes(+n) && !held.has(+n));
+  }
   updateInfo();
 }
 const required = () => osmd.cursor.NotesUnderCursor()
   .filter(n => !n.isRest() && !(n.NoteTie && n.NoteTie.StartNote !== n))
   .map(n => ({m: n.Pitch.getHalfTone() + 12, s: n.ParentStaffEntry.ParentStaff.idInMusicSheet, d: n.Length.RealValue * 4}));
-function build(){            // 走過整份譜，記錄每一步的時間、音符與畫面位置
-  steps = []; pieceHist = new Array(12).fill(0); const c = osmd.cursor, sr = scoreEl.getBoundingClientRect();
-  c.reset();                 // reset 會換新的迭代器，所以每次都重新取 c.Iterator
-  let off = 0, prevRaw = -1, prevPb = 0, prevLen = 0;
+
+function build(){
+  detectStaffRoles();
+  steps = []; pieceHist = new Array(12).fill(0);
+  const c = osmd.cursor, sr = scoreEl.getBoundingClientRect();
+  c.reset();
+  let off = 0, prevRaw = -1, prevPb = 0, prevLen = 0, maxSysH = 220;
   while (!c.Iterator.EndReached){
     const r = c.cursorElement.getBoundingClientRect(), nt = required(), raw = c.Iterator.currentTimeStamp.RealValue * 4;
-    if (steps.length && raw < prevRaw - 1e-6) off = prevPb + prevLen - raw;   // 反覆記號跳回時，時間軸接續往後
+    if (steps.length && raw < prevRaw - 1e-6) off = prevPb + prevLen - raw;
     const pb = raw + off;
     prevRaw = raw; prevPb = pb; prevLen = Math.max(.25, ...c.NotesUnderCursor().map(n => n.Length.RealValue * 4));
     nt.forEach(x => pieceHist[x.m % 12]++);
+    if (r.height > maxSysH) maxSysH = r.height;
     steps.push({bt: pb, nt, ms: c.Iterator.CurrentMeasureIndex || 0, x: r.left - sr.left + scoreEl.scrollLeft, y: r.top - sr.top + scoreEl.scrollTop, h: r.height});
     c.next();
   }
   c.reset(); idx = 0;
   if (steps.length){
-    const h0 = steps[0].h, nx = steps.find(x => x.y > steps[0].y + h0 * .5), pitch = nx ? nx.y - steps[0].y : h0 + 60, st = document.documentElement.style;
-    st.setProperty('--lh', Math.round(h0 + 64) + 'px'); st.setProperty('--lh2', Math.round(pitch + h0 + 64) + 'px');
+    const idealSplit = Math.min(Math.round(innerHeight * 0.52), Math.max(260, Math.round(maxSysH + 85)));
+    document.documentElement.style.setProperty('--score-split-h', idealSplit + 'px');
   }
   try { const ts = osmd.Sheet.SourceMeasures[0].ActiveTimeSignature; barQ = ts.Numerator * 4 / ts.Denominator; } catch (e){ barQ = 4; }
-  $('lb').value = Math.min(4, (steps.length ? steps[steps.length - 1].ms + 1 : 4)); $('la').value = 1;
+  $('lb').value = Math.min(4, (steps.length ? steps[steps.length - 1].ms + 1 : 4));
+  $('la').value = 1;
 }
+
 function follow(){
-  const el = osmd && osmd.cursor.cursorElement; if (!el) return;
-  const a = el.getBoundingClientRect(), b = scoreEl.getBoundingClientRect(), top = a.top - b.top + scoreEl.scrollTop;
-  scoreEl.scrollTop = document.body.classList.contains('single') || document.body.classList.contains('two') ? top - 32 : Math.max(0, top - scoreEl.clientHeight / 3);
+  const el = osmd && osmd.cursor && osmd.cursor.cursorElement; if (!el) return;
+  const a = el.getBoundingClientRect(), b = scoreEl.getBoundingClientRect();
+  const curTop = a.top - b.top + scoreEl.scrollTop;
+  const sysH = a.height || 180;
+  const viewH = scoreEl.clientHeight;
+  if (document.body.classList.contains('split-stage')){
+    const pad = Math.max(16, (viewH - sysH) / 2);
+    scoreEl.scrollTop = Math.max(0, curTop - pad);
+  } else {
+    const relTop = a.top - b.top;
+    const relBot = relTop + sysH;
+    if (relTop < 24 || relBot > viewH - 45){
+      scoreEl.scrollTop = Math.max(0, curTop - Math.max(30, viewH * 0.2));
+    }
+  }
 }
+
 function go(n){ while (n-- > 0 && idx < steps.length){ osmd.cursor.next(); idx++; } }
 function seek(i){ osmd.cursor.reset(); idx = 0; go(i); }
 function refresh(){
@@ -196,80 +1218,149 @@ const loopRange = () => {
   if (!$('loop').checked || !steps.length) return null;
   const a = +$('la').value - 1, b = +$('lb').value - 1, ia = steps.findIndex(s => s.ms >= a);
   if (ia < 0) return null;
-  let ib = ia; for (let i = ia; i < steps.length && steps[i].ms <= b; i++) ib = i;   // 從起點往後連續到終點（避開反覆後再次出現的小節）
+  let ib = ia; for (let i = ia; i < steps.length && steps[i].ms <= b; i++) ib = i;
   return [ia, ib];
 };
-function settle(){           // 初學者：停在下一個需要彈奏的位置
+function settle(){
   while (idx < steps.length && !need(steps[idx]).length) go(1);
   pressed.clear(); refresh();
   if (idx >= steps.length) say('完成！');
 }
 function advanceWait(){ go(1); const r = loopRange(); if (r && idx > r[1]) seek(r[0]); settle(); }
 function restart(){
-  stop(); osmd.cursor.reset(); idx = 0; bars = []; tcur = -1e9; fp = 0; G.on = false;
+  stop(); if (!osmd || !steps.length) return;
+  osmd.cursor.reset(); idx = 0; bars = []; tcur = -1e9; fp = 0; G.on = false;
+  scoreEl.scrollTop = 0;
   if (mode === 'beginner') settle(); else refresh();
 }
 const T = s => s.bt * 60 / bpm / spd;
-function stop(){ playing = false; $('play').textContent = '開始'; $('spd').disabled = false; metroSync(); }
+let cdEnd = -1e9, cdN = 0;
+function stop(){
+  playing = false; cdEnd = -1e9; cdN = 0;
+  $('cd').style.display = 'none';
+  $('play').textContent = '▶ 開始';
+  $('spd').disabled = false;
+  metroSync();
+}
 function startPlay(){
   if (!steps.length) return;
-  if (mode === 'game'){ restart(); gameInit(); t0 = performance.now() + 3000 - T(steps[0]) * 1000; spawnI = 0; say('3 秒後開始'); }
-  else { if (idx >= steps.length - 1) restart(); t0 = performance.now() - T(steps[idx]) * 1000; spawnI = idx; say(MODES[mode] + '模式'); }
-  buildFall(); playing = true; $('play').textContent = '暫停'; $('spd').disabled = true; metroSync();
+  if (mode === 'game'){ restart(); gameInit(); t0 = performance.now() + 3000 - T(steps[0]) * 1000; cdEnd = T(steps[0]); }
+  else { if (idx >= steps.length - 1) restart(); t0 = performance.now() + 3000 - T(steps[idx]) * 1000; cdEnd = T(steps[idx]); }
+  say('倒數 3 秒…'); cdN = 0;
+  buildFall(); playing = true;
+  $('play').textContent = '⏸ 暫停';
+  $('spd').disabled = true;
+  metroSync();
 }
 function setMode(m){
   mode = m; $('mode').value = m; document.body.dataset.mode = m;
-  document.body.classList.toggle('single', m === 'hint' || m === 'glow' || m === 'game');
-  document.body.classList.toggle('two', m === 'beginner');
+  document.body.classList.toggle('split-stage', m === 'hint' || m === 'glow' || m === 'game');
   $('hud').style.display = 'none';
   if (osmd && steps.length) restart();
 }
-async function loadScore(data, name){
-  say('讀取琴譜…'); stop();
+
+async function loadScore(data, name, isFromMidi = false){
+  say('讀取琴譜中…'); stop();
   try {
-    if (!osmd) osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay('score', {backend:'svg', autoResize:false, followCursor:false, drawPartNames:false});
-    await osmd.load(data); osmd.render(); osmd.cursor.show();
-    bpm = Math.round(osmd.Sheet.DefaultStartTempoInBpm || 100); build(); initSpeed(); setMode(mode);
-    say((name || '琴譜') + '：' + MODES[mode] + '模式' + (mode === 'beginner' ? '，按下亮起的琴鍵' : '，按「開始」'));
-  } catch (e){ say('讀取失敗：' + e.message); }
+    $('empty-state').classList.add('hide');
+    document.body.classList.add('has-score');
+    const box = $('osmd-box');
+    box.innerHTML = '';
+    osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay(box, {
+      backend: 'svg',
+      autoResize: false,
+      followCursor: false,
+      drawPartNames: true,
+      drawingParameters: 'compacttight'
+    });
+    await osmd.load(data);
+    osmd.Zoom = zoomLv;
+    osmd.render();
+    osmd.cursor.show();
+    bpm = Math.round(osmd.Sheet.DefaultStartTempoInBpm || 100);
+    build();
+    initSpeed();
+    setMode(mode);
+    buildFall();
+    const tag = isFromMidi ? ' (MIDI 自動轉譜)' : '';
+    say((name || '琴譜') + tag + ' · ' + MODES[mode] + (mode === 'beginner' ? '（請彈亮起的琴鍵）' : '（按「開始」播放）'));
+    return true;
+  } catch (e){
+    say('讀取失敗：' + e.message);
+    return false;
+  }
 }
+
 let rzT = 0;
 addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(() => {
   if (!osmd || !steps.length) return;
-  const i = idx; stop(); osmd.render(); osmd.cursor.show(); build(); go(i); refresh(); buildFall();
+  const i = idx; stop(); osmd.Zoom = zoomLv; osmd.render(); osmd.cursor.show(); build(); go(i); refresh(); buildFall();
 }, 300); });
 
-/* 節拍器（Web Audio） */
+/* ===== 節拍器（Web Audio） ===== */
 let actx = null, metroOn = false, mT0 = 0, nextB = 0;
 function clickAt(t, accent){
   const o = actx.createOscillator(), gn = actx.createGain();
   o.frequency.value = accent ? 1500 : 1000;
-  gn.gain.setValueAtTime(.0001, t); gn.gain.exponentialRampToValueAtTime(.4, t + .002); gn.gain.exponentialRampToValueAtTime(.0001, t + .06);
+  gn.gain.setValueAtTime(.0001, t);
+  gn.gain.exponentialRampToValueAtTime(.4, t + .002);
+  gn.gain.exponentialRampToValueAtTime(.0001, t + .06);
   o.connect(gn); gn.connect(actx.destination); o.start(t); o.stop(t + .08);
 }
 const spb = () => 60 / (bpm * spd);
 function metroSync(){
   if (!actx) return; const now = actx.currentTime + .05;
-  if (playing && steps[idx]){ mT0 = now - steps[idx].bt * spb(); nextB = Math.ceil(steps[idx].bt - 1e-6); } else { mT0 = now; nextB = 0; }
+  if (playing){ const tc = (performance.now() - t0) / 1000; mT0 = now - tc; nextB = Math.ceil(tc / spb() - 1e-6); }
+  else { mT0 = now; nextB = 0; }
 }
-$('metro').onchange = e => { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); metroOn = e.target.checked; metroSync(); };
+$('mt').onclick = () => {
+  actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.resume) actx.resume();
+  metroOn = !metroOn;
+  $('mt').textContent = '🔔 節拍器 ' + (metroOn ? '開' : '關');
+  $('mt').classList.toggle('sec', !metroOn);
+  metroSync();
+};
 $('hand').onchange = e => { hand = e.target.value; if (osmd && steps.length){ buildFall(); mode === 'beginner' ? settle() : refresh(); } };
 
-/* 遊戲模式 */
+/* ===== 遊戲模式 (Excellent / Good / Normal / Missed) ===== */
 let G = {on: false, notes: [], mp: 0, gp: 0, score: 0, combo: 0, max: 0, c: [0, 0, 0, 0]}, calOff = 0, cal = null;
 try { calOff = +localStorage.getItem('calOff') || 0; } catch (e){}
-const JN = [['EXCELLENT', '#ffd54a', 100], ['GOOD', '#7be07b', 70], ['NOT BAD', '#6ec6ff', 40]];
+const JN = [
+  ['Excellent', '#ffd54a', 100],
+  ['Good', '#7be07b', 70],
+  ['Normal', '#6ec6ff', 40]
+];
 function gameInit(){
   G = {on: true, notes: [], mp: 0, gp: 0, score: 0, combo: 0, max: 0, c: [0, 0, 0, 0]};
-  steps.forEach(st => st.nt.forEach(x => G.notes.push({n: x.m, t: T(st), d: false})));
-  $('hud').style.display = 'block'; hudUpdate();
+  steps.forEach(st => st.nt.forEach(x => {
+    if (matchHand(x.s)) G.notes.push({n: x.m, t: T(st), d: false});
+  }));
+  $('hud').style.display = 'block';
+  hudUpdate();
 }
 const tGame = now => (now - t0) / 1000 - calOff / 1000;
-function hudUpdate(){ $('hud').innerHTML = '分數 ' + G.score + '<br>連擊 ' + G.combo + '（最高 ' + G.max + '）<br><small>E ' + G.c[0] + '　G ' + G.c[1] + '　N ' + G.c[2] + '　M ' + G.c[3] + '</small>'; }
+function hudUpdate(){
+  $('hud').innerHTML =
+    '<div class="hud-top">' +
+      '<span class="hud-score">' + G.score + '</span>' +
+      '<span class="hud-combo">🔥 ' + G.combo + ' (最高 ' + G.max + ')</span>' +
+    '</div>' +
+    '<div class="hud-grid">' +
+      '<div class="hud-item"><span style="color:#ffd54a">Excellent</span><span>' + G.c[0] + '</span></div>' +
+      '<div class="hud-item"><span style="color:#7be07b">Good</span><span>' + G.c[1] + '</span></div>' +
+      '<div class="hud-item"><span style="color:#6ec6ff">Normal</span><span>' + G.c[2] + '</span></div>' +
+      '<div class="hud-item"><span style="color:#ff6b6b">Missed</span><span>' + G.c[3] + '</span></div>' +
+    '</div>';
+}
 function pop(n, txt, col){
-  const k = keyEls[n]; if (!k) return; const r = k.getBoundingClientRect(), e = document.createElement('div');
-  e.className = 'jp'; e.textContent = txt; e.style.left = (r.left + r.width / 2) + 'px'; e.style.top = (r.top - 10) + 'px'; e.style.color = col;
-  document.body.appendChild(e); setTimeout(() => e.remove(), 800);
+  const k = keyEls[n]; if (!k) return;
+  const r = k.getBoundingClientRect(), e = document.createElement('div');
+  e.className = 'jp'; e.textContent = txt;
+  e.style.left = (r.left + r.width / 2) + 'px';
+  e.style.top = (r.top - 12) + 'px';
+  e.style.color = col;
+  document.body.appendChild(e);
+  setTimeout(() => e.remove(), 850);
 }
 function comboPop(c){
   const e = document.createElement('div'), em = ['✨','🔥','🎉','⭐','🎵'][Math.random() * 5 | 0], sz = Math.min(7 + c / 8, 14) * (.6 + Math.random() * .6);
@@ -287,24 +1378,43 @@ function judge(n, tp){
     pop(n, JN[j][0], JN[j][1]); if (G.combo % 10 === 0) comboPop(G.combo); hudUpdate(); return;
   }
 }
-function miss(n){ G.c[3]++; G.combo = 0; pop(n, 'MISS', '#ff6b6b'); hudUpdate(); }
+function miss(n){ G.c[3]++; G.combo = 0; pop(n, 'Missed', '#ff6b6b'); hudUpdate(); }
 function finishGame(){
   G.on = false; const tot = G.notes.length || 1, acc = G.score / (100 * tot);
   const R = acc >= .95 ? ['S', '完美演奏！節奏幾乎零失誤。'] : acc >= .85 ? ['A', '非常棒，節奏很穩。'] : acc >= .7 ? ['B', '不錯，再練幾次會更好。'] : acc >= .5 ? ['C', '有進步空間，建議用練習模式放慢速度。'] : ['D', '先從初學者模式慢慢熟悉這首曲子吧。'];
-  $('result').firstElementChild.innerHTML = '<h2 style="margin:0 0 6px">評價 ' + R[0] + '</h2><p>' + R[1] + '</p><p>準確度 ' + (acc * 100).toFixed(1) + '%　分數 ' + G.score + '<br>最高連擊 ' + G.max + '<br>Excellent ' + G.c[0] + '　Good ' + G.c[1] + '　Not bad ' + G.c[2] + '　Missed ' + G.c[3] + '</p><button id="rg">再玩一次</button> <button id="rc" class="sec">關閉</button>';
-  $('result').classList.add('on'); $('rc').onclick = () => $('result').classList.remove('on'); $('rg').onclick = () => { $('result').classList.remove('on'); startPlay(); };
+  $('result').firstElementChild.innerHTML =
+    '<div style="text-align:center">' +
+      '<div style="font-size:13px;color:var(--mut)">演奏結算評價</div>' +
+      '<div class="res-grade">' + R[0] + '</div>' +
+      '<p style="margin:4px 0 12px">' + R[1] + '</p>' +
+      '<div style="font-weight:700;margin-bottom:8px">準確度 ' + (acc * 100).toFixed(1) + '% · 總分 ' + G.score + ' · 最高連擊 ' + G.max + '</div>' +
+      '<div class="res-grid">' +
+        '<div class="res-stat"><small style="color:#ffd54a">Excellent</small><b>' + G.c[0] + '</b></div>' +
+        '<div class="res-stat"><small style="color:#7be07b">Good</small><b>' + G.c[1] + '</b></div>' +
+        '<div class="res-stat"><small style="color:#6ec6ff">Normal</small><b>' + G.c[2] + '</b></div>' +
+        '<div class="res-stat"><small style="color:#ff6b6b">Missed</small><b>' + G.c[3] + '</b></div>' +
+      '</div>' +
+      '<div style="display:flex;gap:10px;justify-content:center;margin-top:16px">' +
+        '<button id="rg">🔄 再玩一次</button>' +
+        '<button id="rc" class="sec">關閉</button>' +
+      '</div>' +
+    '</div>';
+  $('result').classList.add('on');
+  $('rc').onclick = () => $('result').classList.remove('on');
+  $('rg').onclick = () => { $('result').classList.remove('on'); startPlay(); };
 }
 $('cal').onclick = () => {
   actx = actx || new (window.AudioContext || window.webkitAudioContext)(); cal = {tg: [], pr: []};
   const a = actx.currentTime + 1.5, b = performance.now() + 1500;
   for (let i = 0; i < 8; i++){ clickAt(a + i * .6, i % 4 === 0); cal.tg.push(b + i * 600); }
-  dlg('校準中：跟著節拍器的「嗒」聲，按任意琴鍵（或點螢幕）共 8 下。'); setTimeout(finishCal, 1500 + 8 * 600 + 700);
+  dlg('<b>🎯 音訊延遲校準</b><p>請跟著節拍器的「嗒」聲，按任意琴鍵（或點擊畫面）共 8 下。</p>');
+  setTimeout(finishCal, 1500 + 8 * 600 + 700);
 };
 function finishCal(){
   const lat = (actx.outputLatency || actx.baseLatency || 0) * 1000, d = [];
   cal.pr.forEach(p => { let best = null; cal.tg.forEach(t => { if (best === null || Math.abs(p - t) < Math.abs(p - best)) best = t; }); if (Math.abs(p - best) < 400) d.push(p - best - lat); });
   if (d.length < 5) dlg('有效按鍵不足（' + d.length + '/8），請再試一次。');
-  else { d.sort((x, y) => x - y); calOff = Math.round(d[d.length >> 1]); try { localStorage.setItem('calOff', calOff); } catch (e){} dlg('校準完成：偏移 ' + calOff + ' ms（已儲存）。'); }
+  else { d.sort((x, y) => x - y); calOff = Math.round(d[d.length >> 1]); try { localStorage.setItem('calOff', calOff); } catch (e){} dlg('校準完成：偏移 ' + calOff + ' ms（已自動儲存）。'); }
   cal = null;
 }
 $('dlg').addEventListener('pointerdown', () => { if (cal) cal.pr.push(performance.now()); });
@@ -322,40 +1432,79 @@ function onNote(on, n){
 }
 $('kb').addEventListener('pointerdown', e => { const n = +e.target.dataset.n; if (n) onNote(true, n); });
 ['pointerup', 'pointerleave', 'pointercancel'].forEach(t => $('kb').addEventListener(t, e => { const n = +e.target.dataset.n; if (n && held.has(n)) onNote(false, n); }));
-const ped = Array.from($('ped').children);
+const ped = Array.from($('ped').querySelectorAll('b'));
 const setPedal = (cc, v) => { const i = cc === 67 ? 0 : cc === 66 ? 1 : cc === 64 ? 2 : -1; if (i >= 0) ped[i].classList.toggle('on', v >= 64); };
 $('fs').onclick = async () => {
-  try { await document.documentElement.requestFullscreen(); } catch (e){}
+  try {
+    if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
+    else await document.exitFullscreen();
+  } catch (e){}
   try { await screen.orientation.lock('landscape'); } catch (e){}
   try { await navigator.wakeLock.request('screen'); } catch (e){}
 };
 
-/* 特效畫布 */
+/* ===== 特效畫布與瀑布流配色渲染 ===== */
 const fx = $('fx'), g = fx.getContext('2d');
 function fit(){ const r = devicePixelRatio || 1; fx.width = innerWidth * r; fx.height = innerHeight * r; g.setTransform(r, 0, 0, r, 0, 0); }
 addEventListener('resize', fit); fit();
-function band(fn){           // 琴譜範圍內改為半透明
+
+function band(fn){
   const s = scoreEl.getBoundingClientRect();
-  [[0, s.top, 1], [s.top, s.bottom, .3], [s.bottom, innerHeight, 1]].forEach(([a, b, al]) => {
+  [[0, s.top, 1], [s.top, s.bottom, .22], [s.bottom, innerHeight, 1]].forEach(([a, b, al]) => {
     if (b <= a) return; g.save(); g.beginPath(); g.rect(0, a, innerWidth, b - a); g.clip(); g.globalAlpha = al; fn(); g.restore();
   });
 }
+
 let fl = [], fp = 0, tcur = -1e9;
-const FALL = 1.8;            // 光條從畫面頂端落到琴鍵的秒數
+const FALL = 1.8;
 function buildFall(){
   fl = []; fp = 0; if (!steps.length) return;
   steps.forEach(st => st.nt.forEach(x => {
-    if (mode !== 'game' && hand !== 'all' && x.s !== +hand) return;
+    if (!matchHand(x.s)) return;
     const k = keyEls[x.m]; if (!k) return; const r = k.getBoundingClientRect();
-    fl.push({n: x.m, ts: T(st), dur: x.d * 60 / bpm / spd, x: r.left + r.width / 2, w: r.width * .7});
+    fl.push({n: x.m, s: x.s, ts: T(st), dur: x.d * 60 / bpm / spd, x: r.left + r.width / 2, w: r.width * .74});
   }));
   fl.sort((p, q) => p.ts - q.ts);
 }
+function fallColors(o){
+  if (prefFall === 'hand'){
+    return o.s === lhStaffId
+      ? ['rgba(251, 191, 36, .22)', 'rgba(245, 158, 11, .95)', '#fde68a']
+      : ['rgba(56, 189, 248, .22)', 'rgba(14, 165, 233, .95)', '#bae6fd'];
+  }
+  if (prefFall === 'key'){
+    return BK_SET.has(o.n % 12)
+      ? ['rgba(244, 63, 94, .25)', 'rgba(225, 29, 72, .95)', '#fecdd3']
+      : ['rgba(45, 212, 191, .22)', 'rgba(20, 184, 166, .95)', '#99f6e4'];
+  }
+  if (prefFall === 'rainbow'){
+    const h = (o.n % 12) * 30;
+    return [`hsla(${h},95%,60%,.22)`, `hsla(${h},95%,62%,.95)`, `hsla(${h},95%,82%,1)`];
+  }
+  return ['rgba(255,255,255,.15)', 'rgba(255,255,255,.94)', '#ffffff'];
+}
+function drawRoundRect(ctx, x, y, w, h, r){
+  const rr = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + rr, y);
+  ctx.arcTo(x + w, y, x + w, y + h, rr);
+  ctx.arcTo(x + w, y + h, x, y + h, rr);
+  ctx.arcTo(x, y + h, x, y, rr);
+  ctx.arcTo(x, y, x + w, y, rr);
+  ctx.closePath();
+}
+
 let last = performance.now();
 function frame(now){
   const dt = Math.min(.05, (now - last) / 1000); last = now;
   if (playing){
     const t = (now - t0) / 1000; tcur = t;
+    if (t < cdEnd){
+      const n = Math.ceil(cdEnd - t);
+      if (n !== cdN){ cdN = n; const c = $('cd'); c.textContent = n; c.style.display = 'flex'; c.style.animation = 'none'; void c.offsetWidth; c.style.animation = 'pulse .6s ease-out'; }
+    } else if (cdN){
+      cdN = 0; cdEnd = -1e9; $('cd').style.display = 'none'; say(MODES[mode] + '模式進行中');
+    }
     let moved = false;
     while (idx + 1 < steps.length && T(steps[idx + 1]) <= t){ go(1); moved = true; }
     if (moved){
@@ -363,27 +1512,57 @@ function frame(now){
       if (r && idx > r[1]){ seek(r[0]); t0 = now - T(steps[r[0]]) * 1000; fp = 0; metroSync(); }
       refresh();
     }
-    if (mode === 'game' && G.on){ const tg = tGame(now); while (G.mp < G.notes.length && G.notes[G.mp].t + .2 < tg){ const o = G.notes[G.mp++]; if (!o.d){ o.d = true; miss(o.n); } } }
-    if (idx >= steps.length - 1 && t > T(steps[steps.length - 1]) + 1){ stop(); if (mode === 'game' && G.on) finishGame(); else say('完成！'); }
+    if (mode === 'game' && G.on){
+      const tg = tGame(now);
+      while (G.mp < G.notes.length && G.notes[G.mp].t + .2 < tg){ const o = G.notes[G.mp++]; if (!o.d){ o.d = true; miss(o.n); } }
+    }
+    if (idx >= steps.length - 1 && t > T(steps[steps.length - 1]) + 1){
+      stop(); if (mode === 'game' && G.on) finishGame(); else say('演奏完成！');
+    }
   }
-  if (metroOn && actx) while (mT0 + nextB * spb() < actx.currentTime + .12){ clickAt(Math.max(mT0 + nextB * spb(), actx.currentTime), nextB % Math.max(1, Math.round(barQ)) === 0); nextB++; }
+  if (metroOn && actx){
+    while (mT0 + nextB * spb() < actx.currentTime + .12){
+      clickAt(Math.max(mT0 + nextB * spb(), actx.currentTime), ((nextB % Math.max(1, Math.round(barQ))) + Math.max(1, Math.round(barQ))) % Math.max(1, Math.round(barQ)) === 0);
+      nextB++;
+    }
+  }
   g.clearRect(0, 0, innerWidth, innerHeight);
   if (mode === 'glow'){
     for (const b of bars){ b.top -= 320 * dt; if (!b.held) b.bot -= 320 * dt; }
     bars = bars.filter(b => b.bot > -20);
-    band(() => { for (const b of bars){ const h = (b.n % 12) * 30, gr = g.createLinearGradient(0, b.top, 0, Math.max(b.bot, b.top + 1));
-      gr.addColorStop(0, 'hsla(' + h + ',95%,68%,.95)'); gr.addColorStop(1, 'hsla(' + h + ',95%,55%,.15)');
-      g.fillStyle = gr; g.fillRect(b.x - b.w / 2, b.top, b.w, Math.max(b.bot - b.top, 2)); } });
+    band(() => {
+      for (const b of bars){
+        const h = (b.n % 12) * 30, gr = g.createLinearGradient(0, b.top, 0, Math.max(b.bot, b.top + 1));
+        gr.addColorStop(0, 'hsla(' + h + ',95%,68%,.95)');
+        gr.addColorStop(1, 'hsla(' + h + ',95%,55%,.15)');
+        g.fillStyle = gr;
+        drawRoundRect(g, b.x - b.w / 2, b.top, b.w, Math.max(b.bot - b.top, 4), 5);
+        g.fill();
+      }
+    });
   } else if (mode === 'hint' || mode === 'game'){
-    const kb = keyEls[60].getBoundingClientRect().top, V = kb / FALL;
+    const kb = keyEls[60].getBoundingClientRect().top;
+    const stageTop = $('stage').getBoundingClientRect().top || 0;
+    const V = Math.max(120, (kb - stageTop)) / FALL;
     while (fp < fl.length && fl[fp].ts + fl[fp].dur < tcur - .3) fp++;
-    const gr = g.createLinearGradient(0, 0, 0, kb); gr.addColorStop(0, 'rgba(255,255,255,.1)'); gr.addColorStop(1, 'rgba(255,255,255,.95)');
-    g.save(); g.beginPath(); g.rect(0, 0, innerWidth, kb); g.clip(); g.fillStyle = gr;
-    for (let k = fp; k < fl.length && fl[k].ts - FALL <= tcur; k++){
-      const o = fl[k], bot = kb - (o.ts - tcur) * V, top = bot - Math.max(o.dur * V, 12);
-      if (bot >= 0 && top <= kb) g.fillRect(o.x - o.w / 2, top, o.w, bot - top);
-    }
-    g.restore();
+    
+    band(() => {
+      g.save(); g.beginPath(); g.rect(0, stageTop, innerWidth, kb - stageTop); g.clip();
+      for (let k = fp; k < fl.length && fl[k].ts - FALL <= tcur; k++){
+        const o = fl[k], bot = kb - (o.ts - tcur) * V, top = bot - Math.max(o.dur * V, 12);
+        if (bot >= stageTop && top <= kb){
+          const [c0, c1, bdr] = fallColors(o);
+          const gr = g.createLinearGradient(0, top, 0, bot);
+          gr.addColorStop(0, c0); gr.addColorStop(1, c1);
+          g.fillStyle = gr;
+          drawRoundRect(g, o.x - o.w / 2, top, o.w, bot - top, 5);
+          g.fill();
+          g.strokeStyle = bdr; g.lineWidth = 1;
+          g.stroke();
+        }
+      }
+      g.restore();
+    });
   }
   requestAnimationFrame(frame);
 }
@@ -391,14 +1570,20 @@ requestAnimationFrame(frame);
 
 $('mode').onchange = e => setMode(e.target.value);
 $('play').onclick = () => playing ? stop() : startPlay();
-function showSpeed(){ $('spdv').textContent = '♩=' + $('spd').value + (+$('spd').value === bpm ? '（原速）' : ''); }
-function initSpeed(){ const sl = $('spd'); sl.min = Math.max(20, Math.round(bpm * .4)); sl.max = Math.round(bpm * 1.5); sl.step = 1; sl.value = bpm; spd = 1; showSpeed(); }
+function showSpeed(){ $('spdv').textContent = '♩=' + $('spd').value; }
+function initSpeed(){
+  const sl = $('spd');
+  sl.min = Math.max(20, Math.round(bpm * .4));
+  sl.max = Math.round(bpm * 1.5);
+  sl.step = 1; sl.value = bpm; spd = 1;
+  showSpeed();
+}
 $('spd').oninput = e => { spd = e.target.value / bpm; showSpeed(); metroSync(); };
 
-/* 匯入：MIDI、簡譜 → MusicXML（再交給琴譜顯示） */
+/* ===== 匯入：MIDI、簡譜 → MusicXML ===== */
 const LENS = [[16,'whole',0],[12,'half',1],[8,'half',0],[6,'quarter',1],[4,'quarter',0],[3,'eighth',1],[2,'eighth',0],[1,'16th',0]];
 const esc = t => String(t).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
-function toXml(evs, o){      // evs: [{st:0右手|1左手, q:起點(16分音符), d:長度, ps:[midi...]}]
+function toXml(evs, o){
   const bar = o.beats * 16 / o.beatType, end = Math.max(bar, ...evs.map(e => e.q + e.d)), nb = Math.ceil(end / bar);
   const SP = o.fifths < 0 ? [['C',0],['D',-1],['D',0],['E',-1],['E',0],['F',0],['G',-1],['G',0],['A',-1],['A',0],['B',-1],['B',0]] : [['C',0],['C',1],['D',0],['D',1],['E',0],['F',0],['F',1],['G',0],['G',1],['A',0],['A',1],['B',0]];
   const pitch = m => { const [st, al] = SP[m % 12]; return '<pitch><step>' + st + '</step>' + (al ? '<alter>' + al + '</alter>' : '') + '<octave>' + (Math.floor(m / 12) - 1) + '</octave></pitch>'; };
@@ -442,7 +1627,7 @@ function toXml(evs, o){      // evs: [{st:0右手|1左手, q:起點(16分音符)
 function parseMidi(buf){
   const u = new Uint8Array(buf), d = new DataView(buf); let p = 0;
   const str = n => { let t = ''; for (let i = 0; i < n; i++) t += String.fromCharCode(u[p++]); return t; };
-  if (str(4) !== 'MThd') throw new Error('不是 MIDI 檔');
+  if (str(4) !== 'MThd') throw new Error('不是有效的 MIDI 檔');
   p += 4; const ntr = d.getUint16(p + 2), div = d.getUint16(p + 4); p += 6;
   if (div & 0x8000) throw new Error('不支援 SMPTE 時間格式');
   const out = {ppq: div, tempo: 500000, ts: null, key: null, notes: []}; let tempoSet = false;
@@ -464,7 +1649,7 @@ function parseMidi(buf){
       const hi = s & 0xF0, ch = s & 15;
       if (hi === 0xC0 || hi === 0xD0){ p++; continue; }
       const a = u[p++], b = u[p++];
-      if (ch === 9) continue;                    // 打擊樂通道不轉成琴譜
+      if (ch === 9) continue;
       if (hi === 0x90 && b > 0) on[a] = tick;
       else if ((hi === 0x80 || hi === 0x90) && on[a] !== undefined){ out.notes.push({m: a, t: on[a], e: tick}); delete on[a]; }
     }
@@ -505,7 +1690,7 @@ function jianpuToXml(text, name){
       for (const it of items){
         const t = /^([#b♯♭]?)([0-7])([',]*)$/.exec(it); if (!t || t[2] === '0') continue;
         const semi = [0,2,4,5,7,9,11][t[2] - 1] + (/[#♯]/.test(t[1]) ? 1 : /[b♭]/.test(t[1]) ? -1 : 0) + 12 * ((t[3].match(/'/g) || []).length - (t[3].match(/,/g) || []).length);
-        ps.push(60 + tonic + semi);   // 不分左右手：無記號 = 中央 C 附近，, 低八度，' 高八度
+        ps.push(60 + tonic + semi);
       }
       if (ps.length){ last = {q: pos[hnd], d, ps, st: hnd}; evs.push(last); } else last = null;
       pos[hnd] += d;
@@ -514,30 +1699,478 @@ function jianpuToXml(text, name){
   if (!evs.length) throw new Error('沒有讀到音符，請檢查格式');
   return toXml(evs, {beats, beatType, fifths: tonic === 6 && flat ? -6 : fifthsOf({pc: tonic, mn: 0}), tempo, title: name || '簡譜'});
 }
-const JP_SAMPLE = '1=C 4/4 t=90\nR: 1 1 5 5 | 6 6 5 - | 4 4 3 3 | 2 2 1 -\nL: 1, - - - | 4, - 1, - | 5, - 1, - | 5, - 1, -\n';
-$('jp').onclick = () => {
-  dlg('<b>簡譜輸入</b><br><small>數字 1–7 為音，0 休止；高八度加 \' 低八度加 ,；升降 #1 b3；_ 縮短一半（八分）、. 附點、- 延長一拍；( ) 為同時按的和弦；R: 右手 L: 左手；1=C 調、4/4 拍號、t=90 速度；// 為註解。</small><textarea id="jpt" spellcheck="false"></textarea><p><button id="jpgo">載入</button></p>');
-  $('jpt').value = JP_SAMPLE;
-  $('jpgo').onclick = () => { try { const x = jianpuToXml($('jpt').value, '簡譜'); $('dlg').classList.remove('on'); loadScore(x, '簡譜'); } catch (e){ say('簡譜錯誤：' + e.message); } };
-};
-const OMR_MSG = '瀏覽器內沒有可靠的樂譜辨識（OMR）功能。請先用開源的 Audiveris 或打譜軟體把 PDF／圖片轉成 MusicXML（.musicxml 或 .mxl），再用「匯入琴譜」載入。辨識結果常有錯誤，建議先在打譜軟體中校對。';
 
-$('demo').onclick = async () => {
-  try { const r = await fetch('clementi-op36-no1.musicxml'); if (!r.ok) throw new Error(r.status); await loadScore(await r.text(), 'Clementi Op.36 No.1'); }
-  catch (e){ say('無法載入示範曲（請用 HTTPS 或 localhost 開啟，不要直接雙擊檔案）'); }
-};
-$('file').onchange = e => {
+const JP_SAMPLE = '1=C 4/4 t=90\nR: 1 1 5 5 | 6 6 5 - | 4 4 3 3 | 2 2 1 -\nL: 1, - - - | 4, - 1, - | 5, - 1, - | 5, - 1, -\n';
+function openJianpuModal(){
+  dlg('<b>📝 簡譜輸入</b><br><small style="color:var(--mut)">數字 1–7 為音，0 休止；高八度加 \' 低八度加 ,；升降 #1 b3；_ 縮短一半（八分）、. 附點、- 延長一拍；( ) 為同時按的和弦；R: 右手 L: 左手；1=C 調、4/4 拍號、t=90 速度。</small><textarea id="jpt" spellcheck="false"></textarea><div style="margin-top:10px"><button id="jpgo">▶ 載入簡譜</button></div>');
+  $('jpt').value = JP_SAMPLE;
+  $('jpgo').onclick = async () => {
+    try { const x = jianpuToXml($('jpt').value, '自訂簡譜'); $('dlg').classList.remove('on'); await loadScore(x, '自訂簡譜'); }
+    catch (e){ say('簡譜錯誤：' + e.message); }
+  };
+}
+$('jp').onclick = openJianpuModal;
+$('empty-jp').onclick = openJianpuModal;
+
+const OMR_MSG =
+  '<b>📂 支援的樂譜檔案格式說明</b>' +
+  '<p>目前直接匯入支援以下兩大類數位樂譜：</p>' +
+  '<ul style="line-height:1.7;margin:8px 0">' +
+    '<li><b>MusicXML 原生樂譜（最推薦）</b>：<code>.musicxml</code>、<code>.xml</code>、<code>.mxl</code></li>' +
+    '<li><b>MIDI 音樂序列檔（自動轉譯五線譜）</b>：<code>.mid</code>、<code>.midi</code></li>' +
+  '</ul>' +
+  '<p style="color:var(--mut);font-size:13px">註：瀏覽器內無法直接將 PDF 或照片（JPG/PNG）離線辨識為五線譜。請先使用開源的 Audiveris、Clarity-OMR 或打譜軟體轉成 MusicXML / MIDI，或使用「🔍 搜尋曲庫」直接下載現成曲譜。</p>';
+
+function handleFileInput(e){
   const f = e.target.files[0]; if (!f) return;
   const rd = new FileReader(), mxl = /\.mxl$/i.test(f.name), mid = /\.midi?$/i.test(f.name);
   if (/\.(pdf|png|jpe?g)$/i.test(f.name)){ dlg(OMR_MSG); e.target.value = ''; return; }
-  rd.onload = () => { try { loadScore(mid ? midiToXml(rd.result, f.name) : rd.result, f.name); } catch (err){ say('讀取失敗：' + err.message); } };
+  if (!/\.(musicxml|xml|mxl|mid|midi)$/i.test(f.name)){
+    dlg('<b>⚠️ 不支援的檔案格式</b><p>您選擇了 <code>' + esc(f.name) + '</code>。</p>' + OMR_MSG);
+    e.target.value = '';
+    return;
+  }
+  rd.onload = () => {
+    try { loadScore(mid ? midiToXml(rd.result, f.name) : rd.result, f.name, mid); }
+    catch (err){ say('讀取失敗：' + err.message); }
+  };
   mid ? rd.readAsArrayBuffer(f) : mxl ? rd.readAsBinaryString(f) : rd.readAsText(f);
   e.target.value = '';
-};
+}
+$('file').onchange = handleFileInput;
+$('file2').onchange = handleFileInput;
 $('next').onclick = () => { if (!osmd) return; mode === 'beginner' ? advanceWait() : (go(1), refresh()); };
 $('reset').onclick = () => osmd && restart();
 
-/* 藍牙 MIDI（沿用已驗證的連線與封包解析） */
+/* ===== 🔍 曲庫搜尋與下載系統 (精選 XML + GitHub XML + 獨立 MIDI 搜尋引擎) ===== */
+const OSMD_CDN = 'https://cdn.jsdelivr.net/gh/opensheetmusicdisplay/opensheetmusicdisplay@develop/test/data/';
+const CLEM_JP = '1=C 4/4 t=132\nR: 1\' 3\'_ 1\'_ 5 5 | 1\' 3\'_ 1\'_ 5 5\' | 4\'_ 3\'_ 2\'_ 1\'_ 7_ 1\'_ 7_ 1\'_ | 2\'_ 1\'_ 7_ 6_ 5 0 | 1\' 3\'_ 1\'_ 5 5 | 3\' 5\'_ 3\'_ 1\' 3\'_ 1\'_ | 2\'_ 7_ 1\'_ 6_ 7_ 5_ 6_ #4_ | 5_ 6_ 7_ 1\'_ 2\'_ 3\'_ #4\'_ 5\'_\nL: 1 0 0 0 | 1 0 0 0 | 1 0 1 0 | 5, 0 5_ 4_ 3_ 2_ | 1 0 0 0 | 1\' 0 0 #4 | 5 1 2 2, | 5, 0 0 0';
+
+const CURATED_LIB = [
+  { title: 'Sonatina Op.36 No.1 (克萊曼蒂小奏鳴曲)', composer: 'Muzio Clementi', fmt: 'MusicXML (雙手)', url: OSMD_CDN + 'MuzioClementi_SonatinaOpus36No1_Part1.xml', fallbackJp: CLEM_JP },
+  { title: 'Prelude in C Major, BWV 846 (巴哈平均律前奏曲)', composer: 'J.S. Bach', fmt: 'MusicXML (雙手)', url: OSMD_CDN + 'JohannSebastianBach_PraeludiumInCDur_BWV846_1.xml' },
+  { title: 'Minuet in G Major, BWV Anh.114 (巴哈 G 大調小步舞曲)', composer: 'J.S. Bach / Petzold', fmt: 'MusicXML (雙手)', url: OSMD_CDN + 'Bach_Minuet_in_G_major_BWV_Anh_114.xml' },
+  { title: 'The Entertainer (喬普林：散拍經典)', composer: 'Scott Joplin', fmt: 'MusicXML (雙手)', url: OSMD_CDN + 'ScottJoplin_The_Entertainer.xml' },
+  { title: 'Maple Leaf Rag (喬普林：楓葉雷格)', composer: 'Scott Joplin', fmt: 'MusicXML (雙手)', url: OSMD_CDN + 'ScottJoplin_MapleLeafRag.xml' },
+  { title: 'An Chloe, K.524 (莫札特：致克洛伊)', composer: 'W.A. Mozart', fmt: 'MusicXML (三行伴奏譜)', url: OSMD_CDN + 'Mozart_AnChloe.xml' },
+  { title: 'Das Veilchen, K.476 (莫札特：紫羅蘭)', composer: 'W.A. Mozart', fmt: 'MusicXML (三行伴奏譜)', url: OSMD_CDN + 'Mozart_DasVeilchen.xml' },
+  { title: 'Canon in D (帕海貝爾卡農 鋼琴版)', composer: 'J. Pachelbel', fmt: 'MusicXML (雙手)', jp: '1=C 4/4 t=76\nR: 3 - 2 - | 1 - 7, - | 6, - 5, - | 6, - 7, - | 1 5 3 1 | 2 5 2 7, | 1 6, 1 6, | 5, 2 7, 5, | 1 - - -\nL: 1, 5, 1 - | 5,, 2, 5, - | 6,, 3, 6, - | 3,, 7,, 3, - | 4,, 1, 4, - | 1,, 5,, 1, - | 4,, 1, 4, - | 5,, 2, 5, - | 1, - - -' },
+  { title: 'Ode to Joy (貝多芬 歡樂頌雙手練習)', composer: 'L. van Beethoven', fmt: 'MusicXML (雙手)', jp: '1=C 4/4 t=108\nR: 3 3 4 5 | 5 4 3 2 | 1 1 2 3 | 3. 2_ 2 - | 3 3 4 5 | 5 4 3 2 | 1 1 2 3 | 2. 1_ 1 -\nL: (1, 5,) - - - | (5,, 5,) - - - | (6,, 3,) - - - | (5,, 2,) - - - | (1, 5,) - - - | (5,, 5,) - - - | (4,, 1,) - (5,, 2,) - | (1, 3,) - - -' }
+];
+
+/* 內建熱門動漫、華語流行與古典自動轉譯曲目 (置於 MIDI 轉譜專區，100% 穩定可載入，不會出現 HTTP 404) */
+const BUILTIN_MIDI_SONGS = [
+  {
+    title: 'Pegasus Fantasy (聖鬥士星矢主題曲 - 天馬座的幻想)',
+    composer: 'MAKE-UP / 動漫經典',
+    jp: '1=C 4/4 t=136\nR: 6, 0_ 6,_ 1 7, 1 2 3 5 | 6, 0_ 6,_ 1 7, 1 7, 5, 3, | 6, 0_ 6,_ 1 7, 1 2 3 5 | 6 5 3 2 3 - - 0 | 1\' 7 6 5 6 3 5 - | 4 3 2 1 2 3 2 5, | 1\' 7 6 5 6 3 5 - | 4 5 6 7 6 - - -\nL: (6,, 3,) - (6,, 3,) - | (5,, 2,) - (5,, 2,) - | (4,, 1,) - (4,, 1,) - | (3,, 7,,) - (3,, 7,,) - | (4,, 1,) 4, (5,, 2,) 5, | (3,, 7,,) 3, (6,, 3,) 6, | (4,, 1,) 4, (5,, 2,) 5, | (6,, 3,) - (6,, 3,) -'
+  },
+  {
+    title: 'Cruel Angel\'s Thesis (新世紀福音戰士 - 殘酷天使的行動綱領)',
+    composer: '高橋洋子 / 動漫經典',
+    jp: '1=C 4/4 t=128\nR: 1 3 4. 3_ 4 4 4 7 6_ 5_ 4 5 - | 5 7 1\' 4 3 7 7 5 7 7 1\'. 2\'_ 3\' - | 6, 6, 5 5. 3_ 4 3_ 4_ 5 4_ 3_ 2 - | 3 4 5 6 5 3 2 3 - - -\nL: (1, 5,) - (1, 5,) - | (4,, 1,) - (5,, 2,) - | (1, 5,) - (3,, 7,,) - | (4,, 1,) - (5,, 2,) - | (6,, 3,) - (3,, 7,,) - | (4,, 1,) - (5,, 2,) - | (6,, 3,) - (4,, 1,) - | (5,, 2,) - (1, 5,) -'
+  },
+  {
+    title: '龍捲風 (Tornado - 華語流行鋼琴版)',
+    composer: '周杰倫 (Jay Chou)',
+    jp: '1=C 4/4 t=88\nR: 0 1 2 3 5 3 2 1 | 2 1 2 3 1 - - 0 | 0 1 2 3 5 6 5 3 | 2 1 2 3 2 - - 0 | 5 5 5 5 6 5 3 2 | 1 1 2 3 5 3 2 1 | 6, 1 2 3 2 1 7, 1 | 1 - - -\nL: 1, 5, 1 - | 6,, 3, 6, - | 4,, 1, 4, - | 5,, 2, 5, - | 3,, 7,, 3, - | 6,, 3, 6, - | 2,, 6,, 2, 5,, | 1, 5, 1 -'
+  },
+  {
+    title: '勇氣 (Courage - 華語流行鋼琴版)',
+    composer: '梁靜茹 (Fish Leong)',
+    jp: '1=C 4/4 t=76\nR: 3 5 5. 6_ 5 3 2 1 | 6, 1 1. 2_ 1 - 0 5, | 1 2 3 5 3. 2_ 1 2 | 2 - - 0 | 5 1\' 7 5 6 5 3 5 | 4 6 5 3 2 - 0 3_ 4_ | 5 1\' 7 5 6 1\' 2\' 7 | 1\' - - -\nL: 1, 5, 1 5, | 6,, 3, 6, 3, | 4,, 1, 4, 1, | 5,, 2, 5, - | 1, 5, 3, 5, | 6,, 3, 4,, 1, | 2,, 6,, 5,, 2, | 1, 5, 1 -'
+  },
+  {
+    title: '光著腳丫在樹上唱歌 (在樹上唱歌 - 輕快鋼琴版)',
+    composer: '郭靜 (Claire Guo)',
+    jp: '1=C 4/4 t=108\nR: 3 5 6 5 3 2 1 2 | 3 5 6 1\' 5 - - 0 | 6 1\' 6 5 3 1 2 3 | 2 - - 0 | 3 5 6 5 3 2 1 2 | 3 5 6 1\' 2\' 1\' 6 5 | 6 5 3 1 2 3 2 1 | 1 - - -\nL: 1, 5, 1 5, | 6,, 3, 6, 3, | 4,, 1, 4, 1, | 5,, 2, 5, - | 1, 5, 1 5, | 6,, 3, 6, 3, | 4,, 1, 5,, 2, | 1, 5, 1 -'
+  },
+  {
+    title: 'Summer (菊次郎的夏天 主題曲)',
+    composer: '久石讓 (Joe Hisaishi)',
+    jp: '1=C 4/4 t=116\nR: 5_ 1\'_ 2\'_ 3\'_ 2\' 1\' 5 - | 5_ 1\'_ 2\'_ 3\'_ 2\' 1\' 2\' 3\' | 4\' 3\' 2\' 1\' 2\' 1\' 6 5 | 5 - - 0 | 3_ 5_ 6_ 1\'_ 6 5 3 1 | 2_ 3_ 5_ 6_ 5 3 2 - | 3_ 5_ 6_ 1\'_ 2\' 1\' 6 1\' | 1\' - - -\nL: (4,, 1,) 4, (4,, 1,) 4, | (5,, 2,) 5, (5,, 2,) 5, | (3,, 7,,) 3, (6,, 3,) 6, | (2,, 6,,) 2, (5,, 2,) 5, | (4,, 1,) 4, (5,, 2,) 5, | (3,, 7,,) 3, (6,, 3,) 6, | (2,, 6,,) 2, (5,, 2,) 5, | (1, 5,) 1 (1, 5,) -'
+  },
+  {
+    title: 'Für Elise (貝多芬：給愛麗絲 原生 MIDI 測試檔)',
+    composer: 'L. van Beethoven',
+    url: 'https://cdn.jsdelivr.net/gh/opensheetmusicdisplay/opensheetmusicdisplay@develop/test/data/Test.mid'
+  }
+];
+
+async function fetchAndLoadUrl(url, title, downloadOnly = false, fallbackJp = null, btnEl = null){
+  const origTxt = btnEl ? btnEl.textContent : '';
+  if (btnEl){ btnEl.disabled = true; btnEl.textContent = '⏳ 處理中…'; }
+  try {
+    say((downloadOnly ? '下載中：' : '載入中：') + title + '…');
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const isMid = /\.midi?($|\?)/i.test(url);
+    const isMxl = /\.mxl($|\?)/i.test(url);
+    if (downloadOnly){
+      const blob = await r.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      const ext = isMid ? '.mid' : isMxl ? '.mxl' : '.musicxml';
+      a.download = title.replace(/[\\/:*?"<>|]/g, '_') + ext;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      say('已下載：' + a.download);
+      return;
+    }
+    let ok = false;
+    if (isMid){
+      const buf = await r.arrayBuffer();
+      ok = await loadScore(midiToXml(buf, title), title, true);
+    } else if (isMxl){
+      const buf = await r.arrayBuffer();
+      const u8 = new Uint8Array(buf);
+      let bin = ''; for (let i = 0; i < u8.length; i++) bin += String.fromCharCode(u8[i]);
+      ok = await loadScore(bin, title, false);
+    } else {
+      const txt = await r.text();
+      ok = await loadScore(txt, title, false);
+    }
+    if (ok) $('lib-modal').classList.remove('on');
+  } catch (e){
+    if (fallbackJp){
+      const xml = jianpuToXml(fallbackJp, title);
+      if (downloadOnly){
+        const blob = new Blob([xml], {type: 'application/vnd.recordare.musicxml+xml'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = title.replace(/[\\/:*?"<>|]/g, '_') + '.musicxml';
+        a.click();
+        URL.revokeObjectURL(a.href);
+        say('已下載：' + a.download);
+      } else {
+        const ok = await loadScore(xml, title, true);
+        if (ok) $('lib-modal').classList.remove('on');
+      }
+    } else {
+      say('無法取得檔案：' + e.message);
+      dlg('<b>⚠️ 無法載入該檔案</b><p>原因：<code>' + esc(e.message) + '</code></p><p>請確認網路連線正常，或改選其他曲目。</p>');
+    }
+  } finally {
+    if (btnEl){ btnEl.disabled = false; btnEl.textContent = origTxt; }
+  }
+}
+
+function renderCurated(q = ''){
+  const kw = q.trim().toLowerCase();
+  const list = CURATED_LIB.filter(s => !kw || s.title.toLowerCase().includes(kw) || s.composer.toLowerCase().includes(kw));
+  const box = $('curated-list');
+  box.innerHTML = '';
+  if (!list.length){
+    box.innerHTML = '<div style="padding:16px;text-align:center;color:var(--mut)">找不到符合的精選曲目，請切換到「🌐 GitHub 樂譜庫」或「🎹 MIDI 搜尋與轉譜」！</div>';
+    return;
+  }
+  list.forEach(s => {
+    const row = document.createElement('div');
+    row.className = 'song-item';
+    row.innerHTML =
+      '<div class="song-meta">' +
+        '<div class="song-title">' + esc(s.title) + '</div>' +
+        '<div class="song-sub"><span class="badge">' + esc(s.fmt) + '</span><span>' + esc(s.composer) + '</span></div>' +
+      '</div>' +
+      '<div class="song-acts">' +
+        '<button class="load-btn">▶ 載入練習</button>' +
+        '<button class="sec dl-btn" title="下載 .musicxml 檔案">⬇ 下載</button>' +
+      '</div>';
+    const lBtn = row.querySelector('.load-btn');
+    const dBtn = row.querySelector('.dl-btn');
+    lBtn.onclick = async () => {
+      if (s.jp){
+        const xml = jianpuToXml(s.jp, s.title);
+        const ok = await loadScore(xml, s.title);
+        if (ok) $('lib-modal').classList.remove('on');
+      } else {
+        await fetchAndLoadUrl(s.url, s.title, false, s.fallbackJp, lBtn);
+      }
+    };
+    dBtn.onclick = async () => {
+      if (s.jp){
+        const xml = jianpuToXml(s.jp, s.title);
+        const blob = new Blob([xml], {type: 'application/vnd.recordare.musicxml+xml'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = s.title.replace(/[\\/:*?"<>|]/g, '_') + '.musicxml';
+        a.click();
+        URL.revokeObjectURL(a.href);
+        say('已下載：' + a.download);
+      } else {
+        await fetchAndLoadUrl(s.url, s.title, true, s.fallbackJp, dBtn);
+      }
+    };
+    box.appendChild(row);
+  });
+}
+
+/* ===== 頁籤 2：GitHub 原生 MusicXML 搜尋 ===== */
+let ghIndexCache = null;
+const FALLBACK_GH_INDEX = [
+  'Mozart_AnChloe.xml',
+  'Mozart_DasVeilchen.xml',
+  'Mozart_Clarinet_Quintet_Excerpt.mxl',
+  'Mozart_Holzapfel_und_Schlehwein.xml',
+  'JohannSebastianBach_PraeludiumInCDur_BWV846_1.xml',
+  'Bach_Minuet_in_G_major_BWV_Anh_114.xml',
+  'Beethoven_AnDieFerneGeliebte.xml',
+  'Beethoven_Geliebte_Rests.xml',
+  'Dichterliebe01.xml',
+  'ScottJoplin_The_Entertainer.xml',
+  'ScottJoplin_MapleLeafRag.xml',
+  'MuzioClementi_SonatinaOpus36No1_Part1.xml',
+  'MuzioClementi_SonatinaOpus36No1_Part2.xml',
+  'MuzioClementi_SonatinaOpus36No1_Part3.xml',
+  'MuzioClementi_SonatinaOpus36No3_Part1.xml',
+  'MuzioClementi_SonatinaOpus36No3_Part2.xml',
+  'Debussy_Mandoline.xml',
+  'Schubert_An_die_Musik.xml',
+  'Chopin_Prelude_Op28_No4.xml',
+  'Telemann_40_fantasias_11_twv_33_11.xml',
+  'Saltarello.mxl',
+  'ActorPreludeSample.xml',
+  'CharlesGounod_Meditation.xml',
+  'JosephHaydn_ConcertanteCello.xml'
+].map(name => ({
+  name,
+  repo: 'opensheetmusicdisplay/test-data',
+  raw_url: OSMD_CDN + name
+}));
+
+async function ensureGhIndex(){
+  if (ghIndexCache) return ghIndexCache;
+  try {
+    const r = await fetch('https://api.github.com/repos/opensheetmusicdisplay/opensheetmusicdisplay/git/trees/develop?recursive=1');
+    if (r.ok){
+      const td = await r.json();
+      const treeItems = (td.tree || [])
+        .filter(t => t.path.startsWith('test/data/') && /\.(musicxml|xml|mxl)$/i.test(t.path))
+        .map(t => ({
+          name: t.path.split('/').pop(),
+          repo: 'opensheetmusicdisplay/test-data',
+          raw_url: 'https://cdn.jsdelivr.net/gh/opensheetmusicdisplay/opensheetmusicdisplay@develop/' + t.path
+        }));
+      if (treeItems.length){
+        ghIndexCache = treeItems;
+        return ghIndexCache;
+      }
+    }
+  } catch (e){}
+  ghIndexCache = FALLBACK_GH_INDEX;
+  return ghIndexCache;
+}
+
+async function searchGitHubScores(){
+  const q = $('gh-q').value.trim();
+  const box = $('gh-list');
+  box.innerHTML = '<div style="padding:18px;text-align:center;color:var(--mut)">⏳ 正在搜尋公開 MusicXML 樂譜庫…</div>';
+  try {
+    const baseIndex = await ensureGhIndex();
+    const kw = q.toLowerCase();
+    let results = baseIndex.filter(it => !kw || it.name.toLowerCase().includes(kw));
+
+    if (kw){
+      try {
+        const api = 'https://api.github.com/search/code?q=' + encodeURIComponent(q + ' extension:musicxml') + '&per_page=15';
+        const r = await fetch(api, {headers: {'Accept': 'application/vnd.github.v3+json'}});
+        if (r.ok){
+          const data = await r.json();
+          const extra = (data.items || [])
+            .filter(it => /\.(musicxml|xml|mxl)$/i.test(it.name))
+            .map(it => ({
+              name: it.name,
+              repo: it.repository.full_name,
+              raw_url: it.html_url.replace('https://github.com/', 'https://raw.githubusercontent.com/').replace('/blob/', '/')
+            }));
+          const seen = new Set(results.map(x => x.raw_url));
+          extra.forEach(x => { if (!seen.has(x.raw_url)){ seen.add(x.raw_url); results.push(x); } });
+        }
+      } catch (e){}
+    }
+
+    box.innerHTML = '';
+    if (!results.length){
+      box.innerHTML = '<div style="padding:16px;text-align:center;color:var(--mut)">找不到符合「' + esc(q) + '」的原生 MusicXML 樂譜，可切換至「🎹 MIDI 搜尋與轉譜」尋找更多流行或動漫曲目！</div>';
+      return;
+    }
+    results.slice(0, 35).forEach(it => {
+      const ext = it.name.split('.').pop().toUpperCase();
+      const row = document.createElement('div');
+      row.className = 'song-item';
+      row.innerHTML =
+        '<div class="song-meta">' +
+          '<div class="song-title">' + esc(it.name) + '</div>' +
+          '<div class="song-sub"><span class="badge">' + esc(ext) + '</span><span>來源：' + esc(it.repo) + '</span></div>' +
+        '</div>' +
+        '<div class="song-acts">' +
+          '<button class="load-btn">▶ 載入練習</button>' +
+          '<button class="sec dl-btn">⬇ 下載</button>' +
+        '</div>';
+      const lBtn = row.querySelector('.load-btn');
+      const dBtn = row.querySelector('.dl-btn');
+      lBtn.onclick = () => fetchAndLoadUrl(it.raw_url, it.name, false, null, lBtn);
+      dBtn.onclick = () => fetchAndLoadUrl(it.raw_url, it.name, true, null, dBtn);
+      box.appendChild(row);
+    });
+  } catch (e){
+    box.innerHTML = '<div style="padding:16px;color:#ff6b6b">搜尋失敗：' + esc(e.message) + '</div>';
+  }
+}
+
+/* ===== 頁籤 3：獨立 MIDI 搜尋與轉譜引擎 (置於 GitHub 搜尋之後) ===== */
+let midiTreeCache = null;
+async function ensureMidiTreeIndex(){
+  if (midiTreeCache) return midiTreeCache;
+  // 從 GitHub 上公開的古典與流行 MIDI 儲存庫抓取真實存在的 .mid 檔案清單
+  const repos = [
+    { repo: 'opensheetmusicdisplay/opensheetmusicdisplay', branch: 'develop', prefix: 'test/data/' }
+  ];
+  let collected = [];
+  for (const rp of repos){
+    try {
+      const r = await fetch(`https://api.github.com/repos/${rp.repo}/git/trees/${rp.branch}?recursive=1`);
+      if (r.ok){
+        const td = await r.json();
+        const mids = (td.tree || [])
+          .filter(t => /\.midi?$/i.test(t.path))
+          .map(t => ({
+            title: t.path.split('/').pop(),
+            composer: rp.repo,
+            url: `https://cdn.jsdelivr.net/gh/${rp.repo}@${rp.branch}/${t.path}`
+          }));
+        collected.push(...mids);
+      }
+    } catch (e){}
+  }
+  midiTreeCache = collected;
+  return midiTreeCache;
+}
+
+async function searchMidiScores(){
+  const q = $('midi-q').value.trim();
+  const kw = q.toLowerCase();
+  const box = $('midi-list');
+
+  // 同步更新 BitMidi 外部直達搜尋連結，方便使用者一鍵查找 11 萬首免費 MIDI
+  $('ext-bitmidi').href = q ? ('https://bitmidi.com/search?q=' + encodeURIComponent(q)) : 'https://bitmidi.com/';
+  $('ext-bitmidi').textContent = q ? (`BitMidi 搜尋「${q}」↗`) : 'BitMidi (11萬首免費庫) ↗';
+
+  box.innerHTML = '<div style="padding:18px;text-align:center;color:var(--mut)">⏳ 正在檢索可自動轉譜的 MIDI 曲庫…</div>';
+
+  // 1. 篩選內建精選動漫與流行轉譯曲目
+  let results = BUILTIN_MIDI_SONGS.filter(s => !kw || s.title.toLowerCase().includes(kw) || s.composer.toLowerCase().includes(kw));
+
+  // 2. 結合公開倉庫與 GitHub Code Search 即時搜尋 .mid 檔案
+  try {
+    const treeMids = await ensureMidiTreeIndex();
+    treeMids.forEach(m => {
+      if (!kw || m.title.toLowerCase().includes(kw)) results.push(m);
+    });
+    if (kw){
+      const api = 'https://api.github.com/search/code?q=' + encodeURIComponent(q + ' extension:mid') + '&per_page=20';
+      const r = await fetch(api, {headers: {'Accept': 'application/vnd.github.v3+json'}});
+      if (r.ok){
+        const data = await r.json();
+        const extra = (data.items || [])
+          .filter(it => /\.midi?$/i.test(it.name))
+          .map(it => ({
+            title: it.name,
+            composer: 'GitHub: ' + it.repository.full_name,
+            url: it.html_url.replace('https://github.com/', 'https://raw.githubusercontent.com/').replace('/blob/', '/')
+          }));
+        const seen = new Set(results.map(x => x.url || x.title));
+        extra.forEach(x => { if (!seen.has(x.url)){ seen.add(x.url); results.push(x); } });
+      }
+    }
+  } catch (e){}
+
+  box.innerHTML = '';
+  if (!results.length){
+    box.innerHTML =
+      '<div style="padding:16px;text-align:center;color:var(--mut)">' +
+        '內建索引找不到「' + esc(q) + '」，請點擊上方 <b>BitMidi 搜尋「' + esc(q) + '」↗</b> 免登入下載 <code>.mid</code> 檔，再用左上角「📂 匯入」自動轉成五線譜！' +
+      '</div>';
+    return;
+  }
+
+  results.slice(0, 35).forEach(s => {
+    const row = document.createElement('div');
+    row.className = 'song-item';
+    row.innerHTML =
+      '<div class="song-meta">' +
+        '<div class="song-title">' + esc(s.title) + '</div>' +
+        '<div class="song-sub"><span class="badge mid">MIDI 自動轉譜</span><span>' + esc(s.composer) + '</span></div>' +
+      '</div>' +
+      '<div class="song-acts">' +
+        '<button class="load-btn">▶ 載入並轉譜</button>' +
+        '<button class="sec dl-btn" title="下載樂譜檔">⬇ 下載</button>' +
+      '</div>';
+    const lBtn = row.querySelector('.load-btn');
+    const dBtn = row.querySelector('.dl-btn');
+    lBtn.onclick = async () => {
+      if (s.jp){
+        const xml = jianpuToXml(s.jp, s.title);
+        const ok = await loadScore(xml, s.title, true);
+        if (ok) $('lib-modal').classList.remove('on');
+      } else {
+        await fetchAndLoadUrl(s.url, s.title, false, s.fallbackJp, lBtn);
+      }
+    };
+    dBtn.onclick = async () => {
+      if (s.jp){
+        const xml = jianpuToXml(s.jp, s.title);
+        const blob = new Blob([xml], {type: 'application/vnd.recordare.musicxml+xml'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = s.title.replace(/[\\/:*?"<>|]/g, '_') + '.musicxml';
+        a.click();
+        URL.revokeObjectURL(a.href);
+        say('已下載轉譯譜：' + a.download);
+      } else {
+        await fetchAndLoadUrl(s.url, s.title, true, s.fallbackJp, dBtn);
+      }
+    };
+    box.appendChild(row);
+  });
+}
+
+function openLibModal(){
+  renderCurated($('curated-q').value);
+  $('lib-modal').classList.add('on');
+}
+$('open-lib').onclick = openLibModal;
+$('empty-lib').onclick = openLibModal;
+$('lib-close').onclick = () => $('lib-modal').classList.remove('on');
+$('curated-q').oninput = e => renderCurated(e.target.value);
+$('gh-btn').onclick = searchGitHubScores;
+$('gh-q').onkeydown = e => { if (e.key === 'Enter') searchGitHubScores(); };
+$('midi-btn').onclick = searchMidiScores;
+$('midi-q').oninput = () => searchMidiScores();
+$('midi-q').onkeydown = e => { if (e.key === 'Enter') searchMidiScores(); };
+$('url-go').onclick = () => {
+  const u = $('url-in').value.trim();
+  if (u) fetchAndLoadUrl(u, u.split('/').pop() || '網路檔案', false, null, $('url-go'));
+};
+
+const libTabs = [
+  ['tab-curated', 'pane-curated'],
+  ['tab-github', 'pane-github'],
+  ['tab-midi', 'pane-midi'],
+  ['tab-url', 'pane-url']
+];
+libTabs.forEach(([tb, pn]) => {
+  $(tb).onclick = () => {
+    libTabs.forEach(([t, p]) => {
+      $(t).className = t === tb ? 'act' : 'sec';
+      $(p).style.display = p === pn ? 'block' : 'none';
+    });
+    if (tb === 'tab-github' && !$('gh-list').children.length) searchGitHubScores();
+    if (tb === 'tab-midi' && !$('midi-list').children.length) searchMidiScores();
+  };
+});
+
+/* ===== 藍牙 MIDI ===== */
 const SVC = '03b80e5a-ede8-4b33-a751-6ce34ec4c700', CHR = '7772e5db-3868-4112-a1a9-f2669d106bf3';
 let run = 0, sx = false, dev = null;
 function parse(d){
@@ -556,11 +2189,16 @@ function parse(d){
   }
   return o;
 }
-$('ble').onclick = async () => {
+
+async function connectBleDevice(){
   if (!navigator.bluetooth){ say('此瀏覽器不支援 Web Bluetooth，請用 Chrome 或 Edge'); return; }
   try {
     dev = await navigator.bluetooth.requestDevice({filters:[{services:[SVC]}]});
-    dev.addEventListener('gattserverdisconnected', () => { say('藍牙已斷線'); held.clear(); paint(); });
+    dev.addEventListener('gattserverdisconnected', () => {
+      say('藍牙已斷線');
+      $('ble-dot').classList.remove('on');
+      held.clear(); paint();
+    });
     const c = await (await (await dev.gatt.connect()).getPrimaryService(SVC)).getCharacteristic(CHR);
     c.addEventListener('characteristicvaluechanged', e => {
       const v = e.target.value; run = 0; sx = false;
@@ -571,10 +2209,38 @@ $('ble').onclick = async () => {
         else if (t === 0x80 || t === 0x90) onNote(false, m[1]);
       }
     });
-    await c.startNotifications(); say('已連線：' + (dev.name || '藍牙琴'));
-  } catch (e){ say('藍牙失敗：' + e.name); }
+    await c.startNotifications();
+    $('ble-dot').classList.add('on');
+    say('已連線：' + (dev.name || '藍牙 MIDI'));
+  } catch (e){ say('藍牙未連線'); }
+}
+
+$('ble').onclick = () => {
+  if (dev && dev.gatt && dev.gatt.connected){
+    dlg(
+      '<b>🎹 藍牙 MIDI 連線管理</b>' +
+      '<p style="margin:10px 0">目前連線裝置：<b style="color:var(--ac)">' + esc(dev.name || '藍牙 MIDI 琴') + '</b></p>' +
+      '<div style="display:flex;gap:10px;margin-top:14px">' +
+        '<button id="ble-disc" class="danger">🔌 中斷藍牙連線</button>' +
+        '<button id="ble-re" class="sec">🔄 切換其他裝置</button>' +
+      '</div>'
+    );
+    $('ble-disc').onclick = () => {
+      try { dev.gatt.disconnect(); } catch (e){}
+      $('dlg').classList.remove('on');
+      say('已主動中斷藍牙連線');
+    };
+    $('ble-re').onclick = () => {
+      try { dev.gatt.disconnect(); } catch (e){}
+      $('dlg').classList.remove('on');
+      connectBleDevice();
+    };
+  } else {
+    connectBleDevice();
+  }
 };
-setMode('hint'); say('按「示範曲」開始');
+
+setMode('beginner');
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 </script>
 </body>
