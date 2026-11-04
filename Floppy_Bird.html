@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>AI 體感深蹲 Flappy Bird (SVG 智慧微調版)</title>
+  <!-- MediaPipe Pose CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #1a2a3a;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
+      touch-action: none;
+    }
+    #app {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      overflow: hidden;
+      background: #87CEEB;
+      box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    }
+    #gameSvg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* 頂部資訊列 */
+    .hud-top {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    /* 左上角前鏡頭子母畫面 + 高度計 */
+    .cam-widget {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(8px);
+      padding: 6px;
+      border-radius: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      pointer-events: auto;
+    }
+    .cam-box {
+      position: relative;
+      width: 82px;
+      height: 110px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #0f172a;
+    }
+    #webcam {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+    #poseCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transform: scaleX(-1);
+    }
+    .cam-status-badge {
+      position: absolute;
+      bottom: 4px;
+      left: 4px;
+      right: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-align: center;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.65);
+      border-radius: 4px;
+      padding: 2px 0;
+    }
+
+    /* 站↔蹲高度計 */
+    .meter-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 110px;
+      justify-content: space-between;
+      font-size: 10px;
+      font-weight: 800;
+      color: #f8fafc;
+      padding: 2px 3px;
+    }
+    .meter-bar {
+      position: relative;
+      width: 10px;
+      height: 74px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 99px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+    .meter-fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      background: linear-gradient(to top, #38bdf8, #4ade80, #facc15);
+      border-radius: 99px;
+      transition: height 0.08s linear;
+    }
+
+    /* 右上角分數與輔助控制 */
+    .hud-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      pointer-events: auto;
+    }
+    .score-card {
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(8px);
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-radius: 14px;
+      padding: 6px 12px;
+      color: #fff;
+      text-align: right;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+    }
+    .score-main {
+      font-size: 26px;
+      font-weight: 900;
+      color: #fde047;
+      line-height: 1.1;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+    .score-sub {
+      font-size: 11px;
+      color: #cbd5e1;
+      font-weight: 600;
+    }
+
+    .assist-btn {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: #fff;
+      border: 2px solid rgba(255,255,255,0.6);
+      padding: 6px 11px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.45);
+      transition: transform 0.1s;
+    }
+    .assist-btn:active {
+      transform: scale(0.94);
+    }
+    .recal-mini-btn {
+      background: rgba(15, 23, 42, 0.75);
+      color: #e2e8f0;
+      border: 1.5px solid rgba(255,255,255,0.4);
+      padding: 5px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* 彈出面板與選單 */
+    .overlay-panel {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(6px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      z-index: 30;
+    }
+    .card {
+      width: 100%;
+      max-width: 360px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 24px;
+      padding: 22px 20px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      border: 3px solid #fff;
+    }
+    .card-title {
+      font-size: 23px;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+    .card-desc {
+      font-size: 13.5px;
+      color: #475569;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      padding: 13px 16px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: transform 0.12s, box-shadow 0.12s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn:active {
+      transform: scale(0.96);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+    }
+    .btn-amber {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.35);
+    }
+    .btn-blue {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+    }
+    .btn-outline {
+      background: #f1f5f9;
+      color: #334155;
+      border: 2px solid #cbd5e1;
+      font-size: 13.5px;
+      padding: 10px 14px;
+    }
+
+    .step-box {
+      background: #f8fafc;
+      border: 1.5px dashed #cbd5e1;
+      border-radius: 14px;
+      padding: 12px;
+      margin-top: 6px;
+      margin-bottom: 10px;
+    }
+    .step-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+
+    /* 5秒大型倒數計時遮罩 */
+    #countdownOverlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(3px);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 40;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    .cd-ActionText {
+      font-size: 22px;
+      font-weight: 900;
+      color: #fde047;
+      background: rgba(0, 0, 0, 0.65);
+      padding: 10px 22px;
+      border-radius: 99px;
+      margin-bottom: 16px;
+      border: 2px solid rgba(253, 224, 71, 0.5);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    }
+    .cd-Number {
+      font-size: 110px;
+      font-weight: 900;
+      line-height: 1;
+      color: #ffffff;
+      text-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 40px #38bdf8;
+      animation: popIn 0.9s infinite;
+    }
+    .cd-SubHint {
+      margin-top: 16px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #e2e8f0;
+      background: rgba(15, 23, 42, 0.75);
+      padding: 6px 16px;
+      border-radius: 12px;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.75); opacity: 0.6; }
+      50% { transform: scale(1.08); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.9; }
+    }
+
+    .toast-msg {
+      position: absolute;
+      bottom: 85px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.85);
+      color: #38bdf8;
+      padding: 8px 18px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 800;
+      border: 1.5px solid rgba(56, 189, 248, 0.5);
+      z-index: 25;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <!-- 頂部 HUD -->
+  <div class="hud-top">
+    <!-- 左上角：前鏡頭與站蹲高度計 -->
+    <div class="cam-widget">
+      <div class="cam-box">
+        <video id="webcam" playsinline muted></video>
+        <canvas id="poseCanvas" width="160" height="220"></canvas>
+        <div id="camBadge" class="cam-status-badge">等待鏡頭</div>
+      </div>
+      <div class="meter-wrap">
+        <span>站</span>
+        <div class="meter-bar">
+          <div id="postureFill" class="meter-fill"></div>
+        </div>
+        <span>蹲</span>
+      </div>
+    </div>
+
+    <!-- 右上角：分數與貼心微調開關 -->
+    <div class="hud-right">
+      <div class="score-card">
+        <div id="scoreVal" class="score-main">0</div>
+        <div class="score-sub">最高 <span id="bestVal">0</span> ｜ 深蹲 <span id="squatVal">0</span> 次</div>
+      </div>
+      <button id="assistBtn" class="assist-btn">✨ 輔助：貼心微調</button>
+      <button id="recalBtn" class="recal-mini-btn" style="display:none;">🎯 重新校正站姿 (5秒)</button>
+    </div>
+  </div>
+
+  <!-- 100% 純 SVG 遊戲舞台 -->
+  <svg id="gameSvg" viewBox="0 0 400 700" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <!-- 天空漸層 -->
+      <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#38bdf8" />
+        <stop offset="65%" stop-color="#bae6fd" />
+        <stop offset="100%" stop-color="#fef9c3" />
+      </linearGradient>
+
+      <!-- 翡翠立體水管漸層 -->
+      <linearGradient id="pipeGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#15803d" />
+        <stop offset="28%" stop-color="#4ade80" />
+        <stop offset="55%" stop-color="#22c55e" />
+        <stop offset="85%" stop-color="#166534" />
+        <stop offset="100%" stop-color="#14532d" />
+      </linearGradient>
+
+      <!-- 小鳥黃金漸層 -->
+      <radialGradient id="birdBodyGrad" cx="35%" cy="30%" r="70%">
+        <stop offset="0%" stop-color="#fef08a" />
+        <stop offset="55%" stop-color="#facc15" />
+        <stop offset="100%" stop-color="#ea580c" />
+      </radialGradient>
+
+      <!-- 順風氣流護盾光暈 -->
+      <radialGradient id="assistAuraGrad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="rgba(56, 189, 248, 0.0)" />
+        <stop offset="65%" stop-color="rgba(56, 189, 248, 0.35)" />
+        <stop offset="100%" stop-color="rgba(16, 185, 129, 0.75)" />
+      </radialGradient>
+    </defs>
+
+    <!-- 背景天空 -->
+    <rect width="400" height="700" fill="url(#skyGrad)" />
+
+    <!-- 太陽與光暈 -->
+    <circle cx="320" cy="115" r="52" fill="rgba(254, 240, 138, 0.35)" />
+    <circle cx="320" cy="115" r="34" fill="#fef08a" />
+
+    <!-- 遠山視差層 -->
+    <g id="mountainsLayer">
+      <path d="M-40,620 L60,460 L170,620 Z" fill="#7dd3fc" opacity="0.65" />
+      <path d="M100,620 L230,430 L360,620 Z" fill="#38bdf8" opacity="0.55" />
+      <path d="M250,620 L360,470 L460,620 Z" fill="#0284c7" opacity="0.45" />
+    </g>
+
+    <!-- 雲朵層 -->
+    <g id="cloudsLayer"></g>
+
+    <!-- 飛行速度流線層（強化小鳥前進感） -->
+    <g id="speedLinesLayer"></g>
+
+    <!-- 水管障礙物層 -->
+    <g id="pipesLayer"></g>
+
+    <!-- 目標高度虛線引導環 -->
+    <circle id="targetGuideDot" cx="115" cy="300" r="6" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-dasharray="3,3" />
+
+    <!-- 精緻 SVG 主角小鳥 -->
+    <g id="birdGroup" transform="translate(115, 300)">
+      <!-- 智慧微調氣流光環 (作弊輔助觸發時顯示) -->
+      <circle id="assistAura" cx="0" cy="0" r="32" fill="url(#assistAuraGrad)" opacity="0" />
+      <!-- 尾羽 -->
+      <path d="M-18,2 L-30,-7 L-27,1 L-31,8 Z" fill="#c2410c" />
+      <!-- 身體 -->
+      <ellipse cx="0" cy="0" rx="21" ry="17" fill="url(#birdBodyGrad)" stroke="#7c2d12" stroke-width="2" />
+      <!-- 肚子亮面 -->
+      <path d="M-10,6 Q0,16 14,5 Q4,12 -10,6 Z" fill="#fef9c3" opacity="0.8" />
+      <!-- 腮紅 -->
+      <ellipse cx="6" cy="5" rx="4.5" ry="2.8" fill="#fb7185" opacity="0.75" />
+      <!-- 眼睛 -->
+      <circle cx="9" cy="-5" r="6.5" fill="#ffffff" stroke="#7c2d12" stroke-width="1.5" />
+      <circle cx="11" cy="-5" r="3.2" fill="#0f172a" />
+      <circle cx="12.2" cy="-6.5" r="1.3" fill="#ffffff" />
+      <!-- 鳥嘴 -->
+      <path d="M18,-4 L31,-1 L18,3 Z" fill="#fb923c" stroke="#7c2d12" stroke-width="1.5" stroke-linejoin="round" />
+      <path d="M18,3 L28,5 L18,7 Z" fill="#ea580c" stroke="#7c2d12" stroke-width="1.5" stroke-linejoin="round" />
+      <!-- 動態翅膀 -->
+      <g id="birdWing" transform="translate(-4, 1) rotate(0)">
+        <path d="M-8,-2 Q-18,-14 2,-10 Q10,-6 4,4 Q-3,7 -8,-2 Z" fill="#fef08a" stroke="#7c2d12" stroke-width="1.8" />
+      </g>
+    </g>
+
+    <!-- 底部滾動草地與土壤 -->
+    <g id="groundLayer">
+      <rect x="0" y="620" width="400" height="80" fill="#d97706" />
+      <rect x="0" y="620" width="400" height="18" fill="#22c55e" stroke="#14532d" stroke-width="2" />
+      <g id="grassStripes"></g>
+    </g>
+  </svg>
+
+  <!-- 5 秒倒數計時大畫面遮罩 -->
+  <div id="countdownOverlay">
+    <div id="cdActionText" class="cd-ActionText">請放好手機，退後站直！</div>
+    <div id="cdNumber" class="cd-Number">5</div>
+    <div id="cdSubHint" class="cd-SubHint">倒數結束時將自動抓取您的姿勢</div>
+  </div>
+
+  <!-- 浮動提示訊息 -->
+  <div id="toastMsg" class="toast-msg">✨ 順風氣流微調幫忙過關！</div>
+
+  <!-- 初始與校正面板 -->
+  <div id="menuOverlay" class="overlay-panel">
+    <div class="card">
+      <div class="card-title">🐤 體感深蹲 Flappy Bird</div>
+      <div id="menuDesc" class="card-desc">
+        透過手機前鏡頭偵測全身或上半身動作：<br/>
+        <b>站直身體 ＝ 飛到最高點</b><br/>
+        <b>往下深蹲 ＝ 跟著往下飛</b>
+      </div>
+
+      <!-- 第一階段：開啟相機 -->
+      <div id="stepStartCam">
+        <button id="btnInitCam" class="btn btn-primary">📷 開啟前鏡頭準備開始</button>
+        <button id="btnTouchOnly" class="btn btn-outline">👆 不開鏡頭，直接用手指滑動玩</button>
+      </div>
+
+      <!-- 第二階段：5秒倒數站姿校正與開始 -->
+      <div id="stepCalibrate" style="display:none;">
+        <button id="btnQuickCal" class="btn btn-amber">
+          ⚡ 一鍵站姿校正並開始 (倒數5秒)
+        </button>
+
+        <div class="step-box">
+          <div class="step-title">或使用「兩步驟精準校正」（皆含 5 秒倒數）：</div>
+          <button id="btnSetStand" class="btn btn-blue" style="margin-bottom:8px;">
+            1️⃣ 倒數 5 秒：記錄「站立」最高點
+          </button>
+          <button id="btnSetSquat" class="btn btn-primary" style="margin-bottom:0;">
+            2️⃣ 倒數 5 秒：記錄「深蹲」並開始
+          </button>
+        </div>
+
+        <button id="btnStartDirect" class="btn btn-outline" style="margin-top:4px;">
+          🚀 已經校正過了，倒數 3 秒直接開始！
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ====== 音效合成器 (Web Audio API，免外部音檔) ======
+  let audioCtx = null;
+  function ensureAudio() {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) audioCtx = new AC();
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  }
+
+  function playTone(freq, type, duration, vol = 0.15, slideTo = null) {
+    try {
+      ensureAudio();
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      if (slideTo) {
+        osc.frequency.exponentialRampToValueAtTime(slideTo, audioCtx.currentTime + duration);
+      }
+      gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    } catch (e) {}
+  }
+
+  function sfxCountdown(isFinal) {
+    if (isFinal) {
+      playTone(880, 'triangle', 0.35, 0.22, 1174);
+    } else {
+      playTone(523.25, 'sine', 0.16, 0.18);
+    }
+  }
+  function sfxScore() {
+    playTone(587.33, 'sine', 0.12, 0.18);
+    setTimeout(() => playTone(880, 'triangle', 0.22, 0.2), 90);
+  }
+  function sfxAssist() {
+    playTone(440, 'sine', 0.18, 0.08, 660);
+  }
+  function sfxHit() {
+    playTone(180, 'sawtooth', 0.35, 0.22, 65);
+  }
+
+  // ====== DOM 元素 ======
+  const videoEl = document.getElementById('webcam');
+  const poseCanvas = document.getElementById('poseCanvas');
+  const poseCtx = poseCanvas.getContext('2d');
+  const camBadge = document.getElementById('camBadge');
+  const postureFill = document.getElementById('postureFill');
+
+  const scoreValEl = document.getElementById('scoreVal');
+  const bestValEl = document.getElementById('bestVal');
+  const squatValEl = document.getElementById('squatVal');
+  const assistBtn = document.getElementById('assistBtn');
+  const recalBtn = document.getElementById('recalBtn');
+
+  const pipesLayer = document.getElementById('pipesLayer');
+  const cloudsLayer = document.getElementById('cloudsLayer');
+  const speedLinesLayer = document.getElementById('speedLinesLayer');
+  const grassStripes = document.getElementById('grassStripes');
+  const birdGroup = document.getElementById('birdGroup');
+  const birdWing = document.getElementById('birdWing');
+  const assistAura = document.getElementById('assistAura');
+  const targetGuideDot = document.getElementById('targetGuideDot');
+
+  const menuOverlay = document.getElementById('menuOverlay');
+  const menuDesc = document.getElementById('menuDesc');
+  const stepStartCam = document.getElementById('stepStartCam');
+  const stepCalibrate = document.getElementById('stepCalibrate');
+
+  const btnInitCam = document.getElementById('btnInitCam');
+  const btnTouchOnly = document.getElementById('btnTouchOnly');
+  const btnQuickCal = document.getElementById('btnQuickCal');
+  const btnSetStand = document.getElementById('btnSetStand');
+  const btnSetSquat = document.getElementById('btnSetSquat');
+  const btnStartDirect = document.getElementById('btnStartDirect');
+
+  const countdownOverlay = document.getElementById('countdownOverlay');
+  const cdActionText = document.getElementById('cdActionText');
+  const cdNumber = document.getElementById('cdNumber');
+  const cdSubHint = document.getElementById('cdSubHint');
+  const toastMsg = document.getElementById('toastMsg');
+
+  // ====== 遊戲常數與狀態 ======
+  const W = 400;
+  const H = 700;
+  const GROUND_Y = 620;
+  const BIRD_X = 115;
+  const MIN_BIRD_Y = 58;
+  const MAX_BIRD_Y = GROUND_Y - 26;
+
+  let gameState = 'MENU'; // 'MENU' | 'COUNTDOWN' | 'PLAYING'
+  let score = 0;
+  let bestScore = parseInt(localStorage.getItem('squat_flappy_best') || '0', 10);
+  bestValEl.textContent = bestScore;
+
+  // 深蹲計數器
+  let squatCount = 0;
+  let isCurrentlySquatting = false;
+
+  // 智慧輔助等級：1 = 貼心微調(預設), 2 = 強力保送, 0 = 關閉輔助
+  let assistLevel = 1;
+  const ASSIST_NAMES = ['🔥 輔助：關閉', '✨ 輔助：貼心微調', '🛡️ 輔助：強力保送'];
+
+  assistBtn.addEventListener('click', () => {
+    ensureAudio();
+    assistLevel = (assistLevel + 1) % 3;
+    assistBtn.textContent = ASSIST_NAMES[assistLevel];
+    showToast(`已切換為「${ASSIST_NAMES[assistLevel]}」`);
+  });
+
+  function showToast(text) {
+    toastMsg.textContent = text;
+    toastMsg.style.opacity = '1';
+    clearTimeout(showToast._tid);
+    showToast._tid = setTimeout(() => {
+      toastMsg.style.opacity = '0';
+    }, 1800);
+  }
+
+  // 小鳥與控制狀態
+  let birdY = 300;
+  let birdTargetY = 300;
+  let birdVy = 0;
+  let wingPhase = 0;
+
+  // 相機與姿勢校正參數 (MediaPipe 座標：0 為畫面頂端，1 為畫面底端)
+  let useCameraMode = true;
+  let poseReady = false;
+  let rawBodyY = null;
+  let smoothedBodyY = 0.45;
+  let standY = 0.34; // 站立時身體高度 (較靠畫面上方，數值較小)
+  let squatY = 0.56; // 深蹲時身體高度 (較靠畫面下方，數值較大)
+
+  // 背景裝飾與水管陣列
+  let pipes = [];
+  let pipeSpawnTimer = 0;
+  let grassOffset = 0;
+  let clouds = [
+    { x: 60, y: 110, scale: 1.0, speed: 18 },
+    { x: 240, y: 170, scale: 0.75, speed: 13 },
+    { x: 350, y: 85, scale: 0.9, speed: 22 }
+  ];
+  let speedLines = [
+    { x: 380, y: 150, len: 45, speed: 260 },
+    { x: 210, y: 290, len: 60, speed: 310 },
+    { x: 90, y: 450, len: 40, speed: 280 },
+    { x: 310, y: 520, len: 55, speed: 290 }
+  ];
+
+  // 初始化草地斜紋
+  function initGrassStripes() {
+    let html = '';
+    for (let i = -40; i < W + 60; i += 28) {
+      html += `<path d="M${i},620 L${i+12},620 L${i-4},638 L${i-16},638 Z" fill="#16a34a" />`;
+    }
+    grassStripes.innerHTML = html;
+  }
+  initGrassStripes();
+
+  // ====== 5 秒倒數計時器（支援站立校正、深蹲校正與開局） ======
+  let countdownTimerId = null;
+  function runCountdown(seconds, titleText, subText, onComplete) {
+    ensureAudio();
+    if (countdownTimerId) clearInterval(countdownTimerId);
+
+    gameState = 'COUNTDOWN';
+    menuOverlay.style.display = 'none';
+    countdownOverlay.style.display = 'flex';
+
+    let remaining = seconds;
+    cdActionText.textContent = titleText;
+    cdSubHint.textContent = subText;
+    cdNumber.textContent = remaining;
+    sfxCountdown(false);
+
+    countdownTimerId = setInterval(() => {
+      remaining--;
+      if (remaining > 0) {
+        cdNumber.textContent = remaining;
+        sfxCountdown(false);
+      } else {
+        clearInterval(countdownTimerId);
+        countdownTimerId = null;
+        cdNumber.textContent = 'GO!';
+        sfxCountdown(true);
+        setTimeout(() => {
+          countdownOverlay.style.display = 'none';
+          if (onComplete) onComplete();
+        }, 380);
+      }
+    }, 1000);
+  }
+
+  // ====== 啟動遊戲主流程（確保第一根水管立即生成、小鳥穩定前進） ======
+  function startNewGame() {
+    score = 0;
+    scoreValEl.textContent = '0';
+    pipes = [];
+    pipeSpawnTimer = 0;
+
+    // 重要：開局立即在前方生成第一根水管，讓玩家馬上看到小鳥往水管前進！
+    spawnPipe(W + 30);
+
+    birdY = 300;
+    birdTargetY = 300;
+    birdVy = 0;
+    gameState = 'PLAYING';
+    recalBtn.style.display = useCameraMode ? 'inline-block' : 'none';
+  }
+
+  function spawnPipe(startX = W + 40) {
+    // 根據輔助模式微調水管缺口大小
+    const gapSize = assistLevel === 2 ? 195 : (assistLevel === 1 ? 172 : 150);
+    const minCenter = 140;
+    const maxCenter = GROUND_Y - 140;
+    const gapCenter = Math.floor(minCenter + Math.random() * (maxCenter - minCenter));
+
+    pipes.push({
+      x: startX,
+      w: 64,
+      gapY: gapCenter,
+      gapH: gapSize,
+      passed: false,
+      assistNotified: false
+    });
+  }
+
+  // ====== MediaPipe Pose 前鏡頭人體偵測 ======
+  let poseInstance = null;
+  let cameraLoopRunning = false;
+
+  async function initCameraAndPose() {
+    ensureAudio();
+    btnInitCam.disabled = true;
+    btnInitCam.textContent = '⏳ 正在啟動前鏡頭與 AI 模型...';
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: 'user',
+          width: { ideal: 320 },
+          height: { ideal: 240 }
+        },
+        audio: false
+      });
+      videoEl.srcObject = stream;
+      await videoEl.play();
+
+      poseInstance = new Pose({
+        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
+      });
+      poseInstance.setOptions({
+        modelComplexity: 0,
+        smoothLandmarks: true,
+        enableSegmentation: false,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5
+      });
+      poseInstance.onResults(onPoseResults);
+
+      useCameraMode = true;
+      camBadge.textContent = 'AI 偵測中';
+      camBadge.style.background = 'rgba(16, 185, 129, 0.85)';
+
+      if (!cameraLoopRunning) {
+        cameraLoopRunning = true;
+        processVideoFrame();
+      }
+
+      // 切換至校正選單
+      stepStartCam.style.display = 'none';
+      stepCalibrate.style.display = 'block';
+      menuDesc.innerHTML = '鏡頭已啟動！點擊下方按鈕後會有 <b>5 秒倒數</b>，讓您從容放好手機並退後站好。';
+    } catch (err) {
+      btnInitCam.disabled = false;
+      btnInitCam.textContent = '📷 重新嘗試開啟前鏡頭';
+      alert('無法開啟前鏡頭，請確認您使用 https:// 網址或 Safari/Chrome 瀏覽器並允許相機權限，或先點選下方「手指滑動模式」遊玩。');
+    }
+  }
+
+  async function processVideoFrame() {
+    if (useCameraMode && poseInstance && videoEl.readyState >= 2) {
+      try {
+        await poseInstance.send({ image: videoEl });
+      } catch (e) {}
+    }
+    requestAnimationFrame(processVideoFrame);
+  }
+
+  function onPoseResults(results) {
+    poseCtx.clearRect(0, 0, poseCanvas.width, poseCanvas.height);
+
+    if (!results.poseLandmarks || results.poseLandmarks.length === 0) {
+      camBadge.textContent = '請入鏡';
+      camBadge.style.background = 'rgba(239, 68, 68, 0.85)';
+      return;
+    }
+
+    const lm = results.poseLandmarks;
+    const nose = lm[0];
+    const lShoulder = lm[11];
+    const rShoulder = lm[12];
+
+    // 結合鼻尖與雙肩中心點，穩定度最高
+    let detectedY = null;
+    if (lShoulder && rShoulder && lShoulder.visibility > 0.35 && rShoulder.visibility > 0.35) {
+      const shoulderMidY = (lShoulder.y + rShoulder.y) * 0.5;
+      detectedY = nose && nose.visibility > 0.4 ? (nose.y * 0.4 + shoulderMidY * 0.6) : shoulderMidY;
+    } else if (nose && nose.visibility > 0.35) {
+      detectedY = nose.y;
+    }
+
+    if (detectedY !== null) {
+      poseReady = true;
+      rawBodyY = detectedY;
+      // 指數平滑濾波 (EMA)，消除前鏡頭晃動
+      smoothedBodyY = smoothedBodyY * 0.72 + detectedY * 0.28;
+
+      camBadge.textContent = '動作鎖定';
+      camBadge.style.background = 'rgba(16, 185, 129, 0.85)';
+
+      // 繪製子母畫面骨架與校正基準線
+      drawMiniSkeleton(lm, smoothedBodyY);
+
+      // 計算站立(0) ↔ 深蹲(1) 的正規化比例
+      const range = Math.max(0.08, squatY - standY);
+      let norm = (smoothedBodyY - standY) / range;
+      norm = Math.max(0, Math.min(1, norm));
+
+      // 更新左側高度計（站直=100%滿格，深蹲=低格）
+      const standRatioPercent = Math.round((1 - norm) * 100);
+      postureFill.style.height = `${standRatioPercent}%`;
+
+      // 深蹲次數統計
+      if (norm > 0.68 && !isCurrentlySquatting) {
+        isCurrentlySquatting = true;
+        squatCount++;
+        squatValEl.textContent = squatCount;
+      } else if (norm < 0.35 && isCurrentlySquatting) {
+        isCurrentlySquatting = false;
+      }
+
+      // 對應到小鳥目標 Y 座標：站直時在最高點 MIN_BIRD_Y，深蹲時往 MAX_BIRD_Y 移動
+      if ( useCameraMode ) {
+        birdTargetY = MIN_BIRD_Y + norm * (MAX_BIRD_Y - MIN_BIRD_Y);
+      }
+    }
+  }
+
+  function drawMiniSkeleton(lm, currentY) {
+    const cw = poseCanvas.width;
+    const ch = poseCanvas.height;
+
+    // 畫出站立線(綠)與深蹲線(橘)
+    poseCtx.strokeStyle = 'rgba(74, 222, 128, 0.8)';
+    poseCtx.lineWidth = 2;
+    poseCtx.beginPath();
+    poseCtx.moveTo(0, standY * ch);
+    poseCtx.lineTo(cw, standY * ch);
+    poseCtx.stroke();
+
+    poseCtx.strokeStyle = 'rgba(251, 146, 60, 0.8)';
+    poseCtx.beginPath();
+    poseCtx.moveTo(0, squatY * ch);
+    poseCtx.lineTo(cw, squatY * ch);
+    poseCtx.stroke();
+
+    // 畫雙肩連線與鼻尖亮點
+    const lS = lm[11], rS = lm[12], nose = lm[0];
+    if (lS && rS) {
+      poseCtx.strokeStyle = '#38bdf8';
+      poseCtx.lineWidth = 4;
+      poseCtx.beginPath();
+      poseCtx.moveTo(lS.x * cw, lS.y * ch);
+      poseCtx.lineTo(rS.x * cw, rS.y * ch);
+      poseCtx.stroke();
+    }
+    if (nose) {
+      poseCtx.fillStyle = '#fde047';
+      poseCtx.beginPath();
+      poseCtx.arc(nose.x * cw, nose.y * ch, 7, 0, Math.PI * 2);
+      poseCtx.fill();
+    }
+
+    // 當前高度追蹤橫軸
+    poseCtx.fillStyle = '#ffffff';
+    poseCtx.fillRect(0, currentY * ch - 2, cw, 4);
+  }
+
+  // ====== 按鈕事件綁定（全部配備 5 秒倒數！） ======
+  btnInitCam.addEventListener('click', initCameraAndPose);
+
+  btnTouchOnly.addEventListener('click', () => {
+    ensureAudio();
+    useCameraMode = false;
+    camBadge.textContent = '觸控模式';
+    runCountdown(3, '準備用手指上下滑動控制小鳥', '手指往上滑＝飛高，往下滑＝俯衝', () => {
+      startNewGame();
+    });
+  });
+
+  // ⚡ 一鍵站姿校正並開始 (倒數 5 秒)
+  btnQuickCal.addEventListener('click', () => {
+    runCountdown(
+      5,
+      '請放好手機，退後「站直」看著鏡頭！',
+      '倒數 5 秒結束時將自動記錄您的站立最高點並開始遊戲',
+      () => {
+        const baseStand = rawBodyY !== null ? rawBodyY : 0.35;
+        standY = baseStand + 0.015; // 留一點點緩衝讓站直輕鬆觸頂
+        squatY = standY + 0.20;     // 自動推算舒適深蹲行程
+        showToast('✅ 站姿校正完成！開始前進！');
+        startNewGame();
+      }
+    );
+  });
+
+  // 1️⃣ 兩步驟校正：記錄站立最高點 (倒數 5 秒)
+  btnSetStand.addEventListener('click', () => {
+    runCountdown(
+      5,
+      '步驟 1：請退後並保持「站直」姿勢！',
+      '倒數結束時將記錄您的站立高度',
+      () => {
+        standY = (rawBodyY !== null ? rawBodyY : 0.34) + 0.01;
+        if (squatY <= standY + 0.08) squatY = standY + 0.20;
+        menuOverlay.style.display = 'flex';
+        showToast('✅ 已記錄站立最高點！接著可記錄深蹲或直接開始');
+      }
+    );
+  });
+
+  // 2️⃣ 兩步驟校正：記錄深蹲最低點並開始 (倒數 5 秒)
+  btnSetSquat.addEventListener('click', () => {
+    runCountdown(
+      5,
+      '步驟 2：請退後並「往下深蹲」維持住！',
+      '倒數結束時將記錄深蹲最低點並立即開始遊戲',
+      () => {
+        const capturedSquat = rawBodyY !== null ? rawBodyY : (standY + 0.20);
+        squatY = Math.max(standY + 0.10, capturedSquat - 0.01);
+        showToast('✅ 站立與深蹲範圍設定完成！');
+        startNewGame();
+      }
+    );
+  });
+
+  // 🚀 直接開始 (倒數 3 秒)
+  btnStartDirect.addEventListener('click', () => {
+    runCountdown(
+      3,
+      '請退後就位，準備開始！',
+      '站直飛到最高點、深蹲往下穿過水管',
+      () => {
+        startNewGame();
+      }
+    );
+  });
+
+  // 遊戲進行中點擊右上角「重新校正站姿 (5秒)」
+  recalBtn.addEventListener('click', () => {
+    runCountdown(
+      5,
+      '重新校正：請退後保持「站直」！',
+      '5 秒後自動更新站立高度並繼續新局',
+      () => {
+        const baseStand = rawBodyY !== null ? rawBodyY : 0.35;
+        standY = baseStand + 0.015;
+        squatY = standY + 0.20;
+        showToast('✅ 站姿已重新校正！');
+        startNewGame();
+      }
+    );
+  });
+
+  // 觸控/滑鼠拖曳備用支援
+  function handlePointerMove(clientY) {
+    const rect = document.getElementById('app').getBoundingClientRect();
+    const relY = (clientY - rect.top) / rect.height;
+    const svgY = Math.max(MIN_BIRD_Y, Math.min(MAX_BIRD_Y, relY * H));
+    if (!useCameraMode || !poseReady) {
+      birdTargetY = svgY;
+      const norm = (svgY - MIN_BIRD_Y) / (MAX_BIRD_Y - MIN_BIRD_Y);
+      postureFill.style.height = `${Math.round((1 - norm) * 100)}%`;
+    }
+  }
+  window.addEventListener('touchmove', (e) => {
+    if (e.touches && e.touches[0]) handlePointerMove(e.touches[0].clientY);
+  }, { passive: true });
+  window.addEventListener('mousemove', (e) => {
+    if (e.buttons === 1 || !useCameraMode) handlePointerMove(e.clientY);
+  });
+
+  // ====== 遊戲結束處理 ======
+  function triggerGameOver() {
+    sfxHit();
+    gameState = 'MENU';
+    if (score > bestScore) {
+      bestScore = score;
+      localStorage.setItem('squat_flappy_best', String(bestScore));
+      bestValEl.textContent = bestScore;
+    }
+
+    menuOverlay.style.display = 'flex';
+    stepStartCam.style.display = useCameraMode ? 'none' : 'block';
+    stepCalibrate.style.display = useCameraMode ? 'block' : 'none';
+    menuDesc.innerHTML = `
+      <span style="font-size:18px;font-weight:900;color:#dc2626;">💥 撞到障礙物了！</span><br/>
+      本局得分：<b style="color:#d97706;font-size:18px;">${score}</b> 分 ｜ 累積深蹲：<b>${squatCount}</b> 次<br/>
+      <span style="font-size:12px;color:#64748b;">覺得太難可點右上角切換「🛡️ 強力保送」模式！</span>
+    `;
+  }
+
+  // ====== 主遊戲迴圈 (60FPS 物理、小鳥前進視覺與智慧作弊微調) ======
+  let lastTime = performance.now();
+
+  function gameLoop(now) {
+    let dt = (now - lastTime) / 1000;
+    lastTime = now;
+    if (dt <= 0 || dt > 0.1) dt = 0.016; // 防止切換分頁造成時間暴衝
+
+    updateWorld(dt);
+    renderWorld();
+
+    requestAnimationFrame(gameLoop);
+  }
+
+  function updateWorld(dt) {
+    // 1. 滾動雲朵、速度流線與草地（營造小鳥持續往前飛的強烈前進感）
+    const speedFactor = gameState === 'PLAYING' ? 1.0 : 0.45;
+    clouds.forEach(c => {
+      c.x -= c.speed * speedFactor * dt;
+      if (c.x < -90) c.x = W + 70;
+    });
+
+    speedLines.forEach(sl => {
+      sl.x -= sl.speed * speedFactor * dt;
+      if (sl.x < -80) {
+        sl.x = W + Math.random() * 60;
+        sl.y = 80 + Math.random() * (GROUND_Y - 140);
+      }
+    });
+
+    grassOffset = (grassOffset - 165 * speedFactor * dt) % 28;
+
+    // 2. 計算小鳥目標高度與「智慧輔助微調（貼心作弊系統）」
+    let effectiveTargetY = birdTargetY;
+    let isAssistingNow = false;
+
+    if (gameState === 'PLAYING') {
+      // 產生新水管
+      pipeSpawnTimer += dt;
+      if (pipeSpawnTimer >= 2.15) {
+        pipeSpawnTimer = 0;
+        spawnPipe(W + 30);
+      }
+
+      // 尋找小鳥前方最近的一根水管
+      let upcomingPipe = null;
+      for (let i = 0; i < pipes.length; i++) {
+        const p = pipes[i];
+        if (p.x + p.w > BIRD_X - 24) {
+          upcomingPipe = p;
+          break;
+        }
+      }
+
+      // ✨ 智慧磁吸微調（如果小鳥跟洞口距離沒有差太遠，自動幫忙微調高度順順通過）
+      if (upcomingPipe && assistLevel > 0) {
+        const distToPipeFront = upcomingPipe.x - BIRD_X;
+        const detectAheadDist = assistLevel === 2 ? 190 : 135;
+
+        // 當小鳥接近水管入口或正在穿越水管中間時
+        if (distToPipeFront < detectAheadDist && distToPipeFront > -(upcomingPipe.w + 20)) {
+          const safeTop = upcomingPipe.gapY - upcomingPipe.gapH * 0.5 + 24;
+          const safeBottom = upcomingPipe.gapY + upcomingPipe.gapH * 0.5 - 24;
+
+          // 容許作弊幫忙的最大偏差距離（貼心微調: 115px 內幫忙拉回；強力保送: 280px 內直接吸進洞口）
+          const maxForgiveDelta = assistLevel === 2 ? 280 : 115;
+
+          if (effectiveTargetY < safeTop && (safeTop - effectiveTargetY) <= maxForgiveDelta) {
+            const pullStrength = assistLevel === 2 ? 0.92 : 0.78;
+            effectiveTargetY = effectiveTargetY * (1 - pullStrength) + safeTop * pullStrength;
+            isAssistingNow = true;
+          } else if (effectiveTargetY > safeBottom && (effectiveTargetY - safeBottom) <= maxForgiveDelta) {
+            const pullStrength = assistLevel === 2 ? 0.92 : 0.78;
+            effectiveTargetY = effectiveTargetY * (1 - pullStrength) + safeBottom * pullStrength;
+            isAssistingNow = true;
+          }
+
+          // 若小鳥本體已經快擦撞到上下管口邊緣，直接給予順風氣流推力
+          if (isAssistingNow) {
+            birdY += (effectiveTargetY - birdY) * Math.min(1, dt * 11);
+            if (!upcomingPipe.assistNotified) {
+              upcomingPipe.assistNotified = true;
+              sfxAssist();
+              showToast('✨ 順風氣流幫忙微調過關！');
+            }
+          }
+        }
+      }
+
+      // 移動水管並檢查碰撞與加分
+      const pipeSpeed = 165; // 每秒向左推進 165px
+      for (let i = pipes.length - 1; i >= 0; i--) {
+        const p = pipes[i];
+        p.x -= pipeSpeed * dt;
+
+        // 通過水管加分
+        if (!p.passed && p.x + p.w < BIRD_X) {
+          p.passed = true;
+          score++;
+          scoreValEl.textContent = score;
+          sfxScore();
+        }
+
+        // 碰撞判定（已縮小碰撞半徑，並加入擦邊軟性推開）
+        const hitRadius = assistLevel === 2 ? 8 : (assistLevel === 1 ? 11 : 15);
+        if (BIRD_X + hitRadius > p.x && BIRD_X - hitRadius < p.x + p.w) {
+          const gapTop = p.gapY - p.gapH * 0.5;
+          const gapBottom = p.gapY + p.gapH * 0.5;
+
+          // 擦邊寬容度（貼心微調允許 26px 擦邊自動滑開；強力保送 65px）
+          const graceMargin = assistLevel === 2 ? 65 : (assistLevel === 1 ? 26 : 0);
+
+          if (birdY - hitRadius < gapTop) {
+            if ((gapTop - (birdY - hitRadius)) <= graceMargin) {
+              // 擦到上水管邊緣：溫柔往下推開滑進洞口，不判死！
+              birdY = gapTop + hitRadius + 2;
+              isAssistingNow = true;
+            } else {
+              triggerGameOver();
+              return;
+            }
+          } else if (birdY + hitRadius > gapBottom) {
+            if (((birdY + hitRadius) - gapBottom) <= graceMargin) {
+              // 擦到下水管邊緣：溫柔往上推開滑進洞口，不判死！
+              birdY = gapBottom - hitRadius - 2;
+              isAssistingNow = true;
+            } else {
+              triggerGameOver();
+              return;
+            }
+          }
+        }
+
+        // 移除離開畫面的水管
+        if (p.x + p.w < -50) {
+          pipes.splice(i, 1);
+        }
+      }
+    }
+
+    // 3. 更新小鳥平滑垂直位置與拍翅動畫
+    const prevY = birdY;
+    const followSpeed = 9.5;
+    birdY += (effectiveTargetY - birdY) * Math.min(1, dt * followSpeed);
+    birdY = Math.max(MIN_BIRD_Y, Math.min(MAX_BIRD_Y, birdY));
+    birdVy = (birdY - prevY) / dt;
+
+    wingPhase += dt * (gameState === 'PLAYING' ? 18 : 10);
+    assistAura.setAttribute('opacity', isAssistingNow ? '0.95' : '0');
+  }
+
+  function renderWorld() {
+    // 渲染雲朵
+    let cloudSvg = '';
+    clouds.forEach(c => {
+      cloudSvg += `
+        <g transform="translate(${c.x.toFixed(1)}, ${c.y}) scale(${c.scale})" opacity="0.88">
+          <circle cx="0" cy="0" r="20" fill="#ffffff" />
+          <circle cx="18" cy="-6" r="24" fill="#ffffff" />
+          <circle cx="38" cy="0" r="19" fill="#ffffff" />
+          <rect x="0" y="0" width="38" height="20" fill="#ffffff" />
+        </g>`;
+    });
+    cloudsLayer.innerHTML = cloudSvg;
+
+    // 渲染飛行速度線（只在 PLAYING 時明顯顯示，強調小鳥破風前進）
+    if (gameState === 'PLAYING') {
+      let linesSvg = '';
+      speedLines.forEach(sl => {
+        linesSvg += `<line x1="${sl.x.toFixed(1)}" y1="${sl.y}" x2="${(sl.x + sl.len).toFixed(1)}" y2="${sl.y}" stroke="rgba(255,255,255,0.45)" stroke-width="2.5" stroke-linecap="round" />`;
+      });
+      speedLinesLayer.innerHTML = linesSvg;
+    } else {
+      speedLinesLayer.innerHTML = '';
+    }
+
+    // 渲染翡翠立體水管
+    let pipesSvg = '';
+    pipes.forEach(p => {
+      const topH = Math.max(10, p.gapY - p.gapH * 0.5);
+      const botY = p.gapY + p.gapH * 0.5;
+      const botH = Math.max(10, GROUND_Y - botY);
+      const x = p.x.toFixed(1);
+
+      pipesSvg += `
+        <g>
+          <!-- 上水管 -->
+          <rect x="${x}" y="0" width="${p.w}" height="${topH}" fill="url(#pipeGrad)" stroke="#14532d" stroke-width="2" />
+          <rect x="${(p.x - 4).toFixed(1)}" y="${topH - 22}" width="${p.w + 8}" height="22" rx="4" fill="url(#pipeGrad)" stroke="#14532d" stroke-width="2" />
+          <!-- 下水管 -->
+          <rect x="${x}" y="${botY}" width="${p.w}" height="${botH}" fill="url(#pipeGrad)" stroke="#14532d" stroke-width="2" />
+          <rect x="${(p.x - 4).toFixed(1)}" y="${botY}" width="${p.w + 8}" height="22" rx="4" fill="url(#pipeGrad)" stroke="#14532d" stroke-width="2" />
+        </g>`;
+    });
+    pipesLayer.innerHTML = pipesSvg;
+
+    // 渲染草地滾動偏移
+    grassStripes.setAttribute('transform', `translate(${grassOffset.toFixed(1)}, 0)`);
+
+    // 渲染目標高度虛線圓點與小鳥姿態
+    targetGuideDot.setAttribute('cy', birdTargetY.toFixed(1));
+
+    const tiltAngle = Math.max(-24, Math.min(24, birdVy * 0.045));
+    birdGroup.setAttribute('transform', `translate(${BIRD_X}, ${birdY.toFixed(1)}) rotate(${tiltAngle.toFixed(1)})`);
+
+    const wingAngle = Math.sin(wingPhase) * 28;
+    birdWing.setAttribute('transform', `translate(-4, 1) rotate(${wingAngle.toFixed(1)})`);
+  }
+
+  // 啟動主迴圈
+  requestAnimationFrame(gameLoop);
+})();
+</script>
+</body>
+</html>
